@@ -1,6 +1,6 @@
 {
-  "name": "test-plugin",
-  "description": "Test plugin for testing loading of plugins.",
+  "name": "odoo-review",
+  "description": "Odoo review plugin.",
   "version": "1.0.0",
   "author": {
     "name": "Christopher Rogos"
@@ -13,6 +13,5 @@
   "agents": "agents/",
   "skills": [
     "skills/"
-  ],
-  "mcpServers": ".mcp.json"
+  ]
 }
