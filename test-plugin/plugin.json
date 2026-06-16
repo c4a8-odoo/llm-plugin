@@ -1,0 +1,18 @@
+{
+  "name": "test-plugin",
+  "description": "Test plugin for testing loading of plugins.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Christopher Rogos"
+  },
+  "license": "AGPL-3.0",
+  "keywords": [
+    "ai",
+    "copilot"
+  ],
+  "agents": "agents/",
+  "skills": [
+    "skills/"
+  ],
+  "mcpServers": ".mcp.json"
+}

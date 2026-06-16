@@ -1,0 +1,18 @@
+{
+    "name": "c4a8-odoo plugins",
+    "owner": {
+        "name": "Christopher Rogos"
+    },
+    "metadata": {
+        "description": "C4A8 Odoo skills",
+        "version": "1.0.0"
+    },
+    "plugins": [
+        {
+            "name": "test-plugin",
+            "description": "Test plugin for testing loading of plugins.",
+            "version": "1.0.0",
+            "source": "./test-plugin"
+        }
+    ]
+}
