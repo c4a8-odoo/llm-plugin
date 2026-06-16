@@ -118,9 +118,11 @@ Usage: ./migration-oca.sh [old_version] [new_version] [module] [source_branch] [
 
 ### 4. Test Loop
 
-- Use the `odoo-tests` skill for all test execution behavior and command details.
-- Follow `odoo-tests` exactly rather than duplicating command syntax in this agent.
-- Enforce the `odoo-tests` Required Pre-Commit Gate before any commit created by this workflow.
+- Use `odoo-tests` for test code changes.
+- Use `odoo-tests-run-docker` for default migration test execution behavior and command details.
+- Use `odoo-tests-run-local` only when a working local Odoo installation is already available and intentionally selected.
+- Follow the selected execution skill exactly rather than duplicating command syntax in this agent.
+- Enforce the selected test execution skill before any commit created by this workflow.
 - Re-run the narrowest failing test target first.
 - Keep iterating until tests pass or the issue is clearly unsafe for autonomous fixes.
 

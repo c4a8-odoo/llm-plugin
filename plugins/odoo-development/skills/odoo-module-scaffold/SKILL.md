@@ -1,6 +1,7 @@
 ---
 name: odoo-module-scaffold
 description: Guide for creating a new Odoo module. Use this when asked to create, scaffold, or initialize a new Odoo module or addon.
+context: fork
 ---
 
 # Creating a New Odoo Module
@@ -130,5 +131,7 @@ git submodule add -b 18.0 git@github.com:c4a8-odoo/my-new-module.git modules/c4a
 
 - `odoo-development` — extending modules, adding models/views/security after scaffolding
 - `odoo-documentation` — creating `readme/` content (DESCRIPTION.md, CONFIGURE.md, CONTRIBUTORS.md)
-- `odoo-tests` — writing and running unit tests for the new module
+- `odoo-tests` — writing and improving unit tests for the new module
+- `odoo-tests-run-docker` — running tests in docker or podman for CI parity
+- `odoo-tests-run-local` — running tests against an existing local Odoo installation
 - `odoo-validate-module` — validating OCA compliance before merge

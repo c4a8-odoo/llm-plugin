@@ -1,19 +1,24 @@
 ---
 name: odoo-tests
-description: Guide for writing and running Odoo tests.
+description: Guide for writing and improving Odoo tests.
 context: fork
 ---
 
 # Odoo Tests Skill
 
-Purpose: Write, improve and iterate on Odoo module tests following local OCA-style testing patterns.
+Purpose: Write, improve, and refactor Odoo module tests following local OCA-style testing patterns.
 
 ## When to Use
 
 Use this skill when the task involves:
+- Writing new tests for module behavior
 - Improving coverage for models, workflows, wizards or access rules
-- Fixing broken tests
+- Fixing broken test code
 - Refactoring or adapting tests
+
+Use a test execution skill when the task is primarily about running tests:
+- `odoo-tests-run-docker` for CI-parity execution inside docker or podman
+- `odoo-tests-run-local` when a working local Odoo installation is already available
 
 ## Test File Structure
 
@@ -57,80 +62,14 @@ my_module/
 - Computed fields and onchange behavior
 - Cron-triggered or scheduled effects when relevant
 
-## Execution Rules
+## Execution Handoff
 
-Use the skill script as the single entrypoint for test execution.
+After writing or updating tests, pick the correct execution skill:
 
-When tests must run, execute:
+1. Use `odoo-tests-run-docker` when you need CI parity or do not have a trusted local Odoo installation.
+2. Use `odoo-tests-run-local` only when the environment already provides a working Odoo installation, database access, and the required addons path.
 
-```bash
-bash skills/odoo-tests/scripts/run-test-workflow.sh
-```
-
-This script replays the provided `test.yml` test job on the local working tree and runs the same command order used in CI:
-
-1. `oca_install_addons`
-2. `manifestoo -d . check-licenses`
-3. `manifestoo -d . check-dev-status --default-dev-status=Beta`
-4. `oca_init_test_database`
-5. `oca_run_tests`
-
-The script also provisions local PostgreSQL with workflow-compatible credentials and runs inside the OCA CI image with `OCA_ENABLE_CHECKLOG_ODOO=1`.
-
-### Script Options
-
-- Run both matrix images (Odoo + OCB):
-
-```bash
-bash skills/odoo-tests/scripts/run-test-workflow.sh --with-ocb
-```
-
-- Restrict tests to one module:
-
-```bash
-bash skills/odoo-tests/scripts/run-test-workflow.sh --include <module>
-```
-
-- Override the test database name:
-
-```bash
-bash skills/odoo-tests/scripts/run-test-workflow.sh --db <database>
-```
-
-- Override the Python version:
-
-```bash
-bash skills/odoo-tests/scripts/run-test-workflow.sh --python-version <python_version>
-```
-
-- Override the Odoo version:
-
-```bash
-bash skills/odoo-tests/scripts/run-test-workflow.sh --odoo-version <odoo_version>>
-```
-
-### Iteration Rules
-
-- Start with the default command (Odoo image only) while iterating.
-- Use `--include <module>` to narrow scope when appropriate.
-- Use `--with-ocb` before final validation when CI parity is needed.
-- If dependency or manifest checks fail, rerun from the default script command after fixing the issue.
-- If only test logic changed, rerun the same command first, then broaden scope if required.
-
-### Local Scope vs CI Scope
-
-- Do not run `oca_export_and_push_pot` from this skill script.
-- Keep "Detect unreleased dependencies" as an optional, separate local precheck when needed.
-- If the test execution script returns a docker or podman error, stop and report the blocker instead of switching to ad-hoc raw `odoo-bin` execution.
-
-### Failure Handling
-For each failure:
-1. Read the traceback fully.
-2. Ignore "Detect unreleased dependencies" failures.
-3. Decide whether the problem is fixture setup, expectation mismatch, or a real bug.
-4. Fix the narrowest issue.
-5. Re-run `bash skills/odoo-tests/scripts/run-test-workflow.sh` with the narrowest useful flags.
-6. Repeat until green or until a genuine implementation defect is isolated.
+Keep command syntax and rerun strategy inside the execution skills instead of duplicating them here.
 
 ## Local Conventions
 
@@ -145,4 +84,4 @@ For each failure:
 After using this skill, provide:
 - Test files added or changed
 - Scenarios now covered
-- Pass/fail result summary
+- Any follow-up execution step that still needs to run

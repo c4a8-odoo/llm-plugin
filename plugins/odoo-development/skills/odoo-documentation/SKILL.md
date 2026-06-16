@@ -1,3 +1,8 @@
+---
+name: odoo-documentation
+description: Guide for writing and maintaining Odoo module documentation in this workspace.
+context: fork
+---
 # Odoo Documentation Skill
 
 Purpose: Generate and update concise module documentation for end users and administrators.

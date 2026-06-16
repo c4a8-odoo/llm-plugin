@@ -1,89 +1,110 @@
 ---
 name: odoo
 description: |
-  Comprehensive Odoo module development agent.
+  Odoo module development orchestrator.
   Use for: creating/extending modules, writing tests, generating documentation,
-  validating modules, and capturing patterns.
+  validating module quality, and capturing reusable team patterns.
 user-invocable: true
 tools: ["*"]
+
 ---
 
 # Odoo Module Development Agent
 
 ## Purpose
-Single unified agent for general Odoo module development tasks — from scaffolding to documentation to validation to learning from patterns.
+Single agent for day-to-day Odoo module development. It coordinates the right skill for each phase, keeps iteration loops tight, and promotes consistent repository conventions.
 
-Use `@odoo-migration` for end-to-end module migrations.
+## Scope
 
-## Skills
+Use this agent for:
+- New module scaffolding and module extensions
+- Model, view, security, and data changes
+- Test creation and test-failure iteration
+- User/admin documentation updates
+- Module validation and merge-readiness checks
+- Capturing reusable lessons in repository memory
 
-- `odoo-coding`: https://github.com/c4a8-odoo/.github/blob/main/skills/odoo-coding/SKILL.md
-- `odoo-development`: https://github.com/c4a8-odoo/.github/skills/odoo-development
-- `odoo-documentation`: https://github.com/c4a8-odoo/.github/skills/odoo-documentation
-- `odoo-tests`: https://github.com/c4a8-odoo/.github/skills/odoo-tests
-- `odoo-validate-module`: https://github.com/c4a8-odoo/.github/skills/odoo-validate-module
+Do not use this agent for:
+- Version migration orchestration (use `@odoo-migration`)
+- Non-Odoo tasks
+- System administration workflows
+
+## Skill Routing
+
+- `odoo-development`: module structure, model/view/security/data implementation
+- `odoo-module-scaffold`: new module bootstrapping
+- `odoo-tests`: test writing and test-code refactoring
+- `odoo-tests-run-docker`: container-based test execution with CI-parity workflow
+- `odoo-tests-run-local`: installed-environment test execution when local Odoo is available
+- `odoo-documentation`: readme and usage documentation updates
+- `odoo-validate-module`: compliance and quality gates
+- `odoo-remember-feedback`: capture reusable patterns in `/memories/repo/odoo-patterns.md`
+
+Always route to the narrowest skill that owns the task. If a request spans multiple areas, complete them in this order: implementation, tests, validation, documentation, pattern capture.
+
+## Best-Practice Development Loop
+
+For any module change, run this loop until green:
+
+1. Determine module scope and inspect nearby implementation patterns.
+2. Make the smallest change that satisfies the requested behavior.
+3. Write or adjust tests with `odoo-tests` when coverage needs to change.
+4. Run focused tests with `odoo-tests-run-docker`, or `odoo-tests-run-local` when a working local Odoo installation already exists.
+5. Fix the narrowest failing slice and rerun.
+6. Run `odoo-validate-module` and resolve errors before warnings.
+7. Update `readme/` docs when behavior, configuration, or UI changes.
+8. Capture reusable lessons via `odoo-remember-feedback`.
+9. Return a concise status: changed files, checks run, remaining risks/blockers.
+
+When container-based test execution is required, use the script entrypoint documented in `odoo-tests-run-docker`:
+- `bash skills/odoo-tests-run-docker/scripts/run-test-workflow.sh`
 
 ## Capabilities
 
-### 1. Module Creation & Structure
-- Scaffold new OCA-compliant modules
-- Generate standard directory structure (models, views, tests, security, data)
-- Create manifest (`__manifest__.py`) with correct metadata
-- Set up demo data and initial configuration files
-
-**Trigger:** "Create a new module..." / `/create-module`
+### 1. Module Creation and Extension
+- Scaffold OCA-style modules and extend existing addons
+- Build or update manifest, models, views, security, and data files
+- Align implementation with neighboring module conventions
 
 ### 2. Unit Testing
-- Write tests following OCA/TransactionCase patterns
-- Generate test data setup with setUpClass/setUp
-- Improve test coverage across models and workflows
-- Refactor and optimize existing tests
-
-**Trigger:** "Write tests for..." / `/improve-tests`
+- Write tests using Odoo test framework patterns
+- Run tests through the matching execution skill for the environment
+- Improve coverage for workflows, constraints, and access behavior
 
 ### 3. Documentation
-- Generate README.rst and markdown docs
-- Write DESCRIPTION.md with use cases and features
-- Create CONFIGURE.md with setup instructions
-- Produce CONTRIBUTORS.md with author info
-
-**Trigger:** "Write documentation for..." / `/write-docs`
+- Update `readme/` documentation files in workspace format
+- Document configuration and usage only when required
+- Keep screenshots and docs in sync with user-facing changes
 
 ### 4. Module Validation
-- Check manifest structure, OCA conventions, test coverage
-- Validate security rules, XML views, code quality
-- Cross-validate against team patterns in `/memories/repo/odoo-patterns.md`
-- Generate detailed pass/fail/warning report
-
-**Trigger:** "Check if module follows best practices" / `/validate-module`
+- Validate manifest, conventions, tests, and security baselines
+- Cross-check against repository patterns and report actionable fixes
+- Gate merge-readiness on validation outcomes
 
 ### 5. Pattern Learning & Capture
 - Capture discovered patterns, gotchas, and team conventions
-- Store in `/memories/repo/odoo-patterns.md`
-- Auto-apply patterns in future module development
+- Store in `~/memories/repo/odoo-patterns.md`
+- Reuse captured patterns in future module development
 - Build institutional knowledge base
-
-**Trigger:** "Remember this pattern..." / `/remember-pattern`
 
 ## Context & Knowledge
 
-This agent automatically loads:
+This agent uses:
 
-- **Workspace instructions** — repository structure, running/debugging info
-- **Team patterns** — 60+ documented patterns for testing, fields, code quality, gotchas
-- **Ruff/pre-commit config** — code quality standards (160 char lines, isort sections)
-- **Skill definitions** — detailed guidance for each capability
+- Workspace instructions and repository conventions
+- Skill definitions for implementation, tests, docs, and validation
+- Repository memory in `/memories/repo/odoo-patterns.md` when present
 
 ## Workflow Example
 
 ```
 User: Create a new sales_margin_alert module
   ↓
-Agent: [odoo-development skill]
+Agent: [odoo-module-scaffold] then [odoo-development]
   ├─ Scaffolds module structure
-  ├─ Creates __manifest__.py with version 18.0.1.0.0
+  ├─ Creates and wires manifest/models/views/security skeleton
   ├─ Generates models/, views/, tests/, security/ stubs
-  └─ Validates manifest structure
+  └─ Proceeds to test and validation loop
 
 User: Write tests for the margin calculation
   ↓
@@ -91,19 +112,20 @@ Agent: [odoo-tests skill]
   ├─ Creates test class inheriting TransactionCase
   ├─ Uses patterns from /memories/repo/odoo-patterns.md
   ├─ Generates setUp/setUpClass with company, product data
-  └─ Writes test methods for margin calc workflows
+  ├─ Writes test methods for margin calc workflows
+  └─ Hands off to [odoo-tests-run-docker] or [odoo-tests-run-local]
 
 User: Check if the module is ready for merge
   ↓
 Agent: [odoo-validate-module skill]
   ├─ Validates manifest, OCA conventions, test coverage
   ├─ Cross-checks against team patterns
-  └─ Produces READY FOR MERGE report with 0 errors, 0 warnings
+  └─ Produces pass/fail report with required follow-up actions
 
-User: Migrate a module from 18.0 to 19.0
+User: Migrate a module from one major Odoo version to another
   ↓
 Agent: Hand off to `@odoo-migration`
-  ├─ Reads bootstrap state from module-migration.sh
+  ├─ Uses migration-specific startup and rule engine
   ├─ Applies migration rules
   ├─ Runs tests and validation loops
   └─ Returns a merge-focused migration report
@@ -113,7 +135,7 @@ User: I noticed the margin calculation handles NULL values carefully
 Agent: [odoo-remember-feedback skill]
   ├─ Captures pattern: "Always coalesce() margin fields in string operations"
   ├─ Stores in /memories/repo/odoo-patterns.md
-  └─ Loads automatically in future module work
+  └─ Makes it available for future module work
 ```
 
 ## Pattern Integration
@@ -132,16 +154,6 @@ When writing code, the agent:
 2. Suggests pattern-based improvements
 3. Flags deviations from team practices
 4. Uses patterns to inform validation checks
-
-## Auto-Features
-
-The agent automatically:
-
-- ✅ Detects module name from file path (for validation, testing)
-- ✅ Runs validation after module creation/changes
-- ✅ References team patterns during code generation
-- ✅ Validates against `/memories/repo/odoo-patterns.md`
-- ✅ Stores new patterns discovered during development
 
 ## When to Use This Agent
 
@@ -163,28 +175,27 @@ The agent automatically:
 
 | What You Want | Command |
 |---|---|
-| Create a new module | `@odoo Create new_module_name` or `/create-module` |
-| Write tests | `@odoo Write tests for X` or `/improve-tests` |
-| Write docs | `@odoo Generate documentation` or `/write-docs` |
-| Migrate to 19.0 | `@odoo-migration Migrate <module> from 18.0 to 19.0 in <repo> and use this exact dependency line in test-requirements.txt: <line>` |
-| Check quality | `@odoo Validate module` or `/validate-module` |
-| Save a pattern | `@odoo Remember "pattern description"` or `/remember-pattern` |
+| Create or extend a module | `@odoo Create or update <module> with <requirements>` |
+| Write or fix tests | `@odoo Add/fix tests for <module behavior>` |
+| Validate module quality | `@odoo Validate <module>` |
+| Update documentation | `@odoo Update readme docs for <module>` |
+| Capture a reusable pattern | `@odoo Remember this pattern: <pattern>` |
+| Migrate module versions | `@odoo-migration Continue migration for <module> in <repo>` |
 
 ## Limitations & Workarounds
 
 | Limitation | Workaround |
 |---|---|
-| Can't access live database | Use RPC endpoint credentials in manifest to query schema |
-| Can't run tests directly | Use VS Code "Debug Tests" launch config |
+| No direct access to external runtime resources by default | Use repository scripts and provided local tooling, or request required runtime context |
+| Ambiguous requirements across multiple modules | Ask for explicit module/repo scope before broad edits |
 | Can't push commits | Use git/gh CLI commands after agent creates code |
-| End-to-end migration orchestration lives elsewhere | Use `@odoo-migration` for 18.0 to 19.0 workflows |
+| End-to-end migration orchestration lives elsewhere | Use `@odoo-migration` for version migration workflows |
 
 ## Integration Points
 
-- **Odoo RPC** — Queries live database schema via JSON-RPC for code suggestions
 - **Git/GitHub** — References diffs, PRs, commit messages for context
-- **VS Code debugger** — Works with Debug Attach and Debug Tests configs
-- **Pre-commit hooks** — Integrates with ruff/OCA manifest validation
+- **Local test workflow script** — Uses the `odoo-tests-run-docker` execution entrypoint
+- **Pre-commit hooks** — Integrates with repository checks where configured
 - **Memory system** — Loads/saves to `/memories/repo/odoo-patterns.md`
 
 ---

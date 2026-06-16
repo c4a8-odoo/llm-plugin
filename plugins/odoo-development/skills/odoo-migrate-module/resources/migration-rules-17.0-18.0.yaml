@@ -480,7 +480,7 @@ supported_paths:
             - tests_pending
         action:
           kind: invoke_skill
-          skill: odoo-tests
+          skill: odoo-tests-run-docker
 
       - id: validation.post_migration.module_check
         scope: workflow

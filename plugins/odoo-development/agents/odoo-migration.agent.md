@@ -9,20 +9,13 @@ description: |
   merge-ready migration report.
 user-invocable: true
 tools: ["*"]
-skills:
-  - ../skills/odoo-coding/SKILL.md
-  - ../skills/odoo-development/SKILL.md
-  - ../skills/odoo-documentation/SKILL.md
-  - ../skills/odoo-migrate-module/SKILL.md
-  - ../skills/odoo-tests/SKILL.md
-  - ../skills/odoo-validate-module/SKILL.md
 ---
 
 # Odoo Migration Agent
 
 ## Purpose
 
-Single-purpose agent for reliable module migrations after bootstrap. The agent assumes the initial migration script has already been executed and a migration PR already exists, then applies rule-driven migration fixes, resolves CI/test blockers, runs required quality gates, and stops only on genuine blockers or explicit manual-review cases. The migration steps are described in the `odoo-migrate-module` skill. To test the module, use the `odoo-tests` skill and check the test results to plan the next actions. Do not start other instances of this agent.
+Single-purpose agent for reliable module migrations after bootstrap. The agent assumes the initial migration script has already been executed and a migration PR already exists, then applies rule-driven migration fixes, resolves CI/test blockers, runs required quality gates, and stops only on genuine blockers or explicit manual-review cases. The migration steps are described in the `odoo-migrate-module` skill. Use `odoo-tests` for test code changes, `odoo-tests-run-docker` for CI-parity execution, and `odoo-tests-run-local` only when a working local Odoo installation already exists. Do not start other instances of this agent.
 
 ## Mandatory Startup Gate
 
@@ -46,6 +39,8 @@ This agent is part of https://github.com/c4a8-odoo/.github and needs additional 
 - `odoo-migrate-module`: https://github.com/c4a8-odoo/.github/blob/main/skills/odoo-migrate-module/SKILL.md
 - `odoo-documentation`: https://github.com/c4a8-odoo/.github/blob/main/skills/odoo-documentation/SKILL.md
 - `odoo-tests`: https://github.com/c4a8-odoo/.github/blob/main/skills/odoo-tests/SKILL.md
+- `odoo-tests-run-docker`: https://github.com/c4a8-odoo/.github/blob/main/skills/odoo-tests-run-docker/SKILL.md
+- `odoo-tests-run-local`: https://github.com/c4a8-odoo/.github/blob/main/skills/odoo-tests-run-local/SKILL.md
 - `odoo-validate-module`: https://github.com/c4a8-odoo/.github/blob/main/skills/odoo-validate-module/SKILL.md
 
 ## Primary Entry Points

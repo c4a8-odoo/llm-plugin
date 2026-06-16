@@ -1,3 +1,8 @@
+---
+name: odoo-validate-module
+description: Validate Odoo modules against OCA, c4a8, and repository conventions.
+context: fork
+---
 # Odoo Validate Module Skill
 
 **Purpose:** Validate Odoo modules against OCA best practices, c4a8 conventions, and team patterns. Produces a structured report with errors, warnings, and actionable fixes.
@@ -466,7 +471,7 @@ Only checks compliance with team patterns in `/memories/repo/odoo-patterns.md`.
 
 ## Configuration
 
-**Validation level** can be set in [copilot-instructions.md](.github/copilot-instructions.md):
+**Validation level** can be set in the workspace Copilot instructions file:
 
 ```yaml
 # Standard (default)
@@ -489,7 +494,9 @@ validation_level: lenient
 | Skill | Integration |
 |-------|-------------|
 | `odoo-development` | Validates module after creation |
-| `odoo-tests` | Reports test coverage via validation |
+| `odoo-tests` | Writes or updates tests before validation |
+| `odoo-tests-run-docker` | Provides container-based execution results that validation can rely on |
+| `odoo-tests-run-local` | Provides local execution results when a working Odoo install exists |
 | `odoo-migrate-module` | Validates module after migration |
 | `odoo-remember-feedback` | Validation patterns stored in `/memories/repo/odoo-patterns.md` |
 
@@ -504,7 +511,7 @@ A: Yes, but not recommended. Use `@odoo create-module --no-validate` to skip, bu
 A: After significant changes — especially after writing models, tests, or security rules. Use `/validate-module` as part of your development workflow.
 
 **Q: Can I add custom validation rules?**  
-A: Yes, through `@odoo /remember-pattern "custom rule..."`. Custom rules are stored in `/memories/repo/odoo-patterns.md` and validated against.
+A: Yes, through `@odoo Remember this pattern: custom rule...`. Custom rules are stored in `/memories/repo/odoo-patterns.md` and validated against.
 
 **Q: What if validation contradicts OCA standards?**  
 A: OCA standards always take priority. If team patterns conflict with OCA, update `/memories/repo/odoo-patterns.md` or file an issue.

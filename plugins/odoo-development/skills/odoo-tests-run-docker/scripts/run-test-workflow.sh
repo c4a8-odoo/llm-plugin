@@ -18,7 +18,7 @@ usage() {
 Run the provided test.yml workflow test job locally on the current working tree.
 
 Usage:
-  bash skills/odoo-tests/scripts/run-test-workflow.sh [--with-ocb] [--include <module>] [--db <database>] [--odoo-version <version>] [--python-version <version>] [--enterprise <path>]
+  bash skills/odoo-tests-run-docker/scripts/run-test-workflow.sh [--with-ocb] [--include <module>] [--db <database>] [--odoo-version <version>] [--python-version <version>] [--enterprise <path>]
 
 Options:
   --with-ocb             Run both matrix images (Odoo first, then OCB).
@@ -146,7 +146,7 @@ fi
 for image in "${IMAGES[@]}"; do
   echo ""
   echo "=== Running local workflow in image: $image ==="
-  
+
   # Build volume mounts
   PATH_ADDONS="/addon"
   if [[ -n "$ENTERPRISE_PATH" ]]; then

@@ -1,3 +1,7 @@
+---
+name: odoo-development
+description: Scaffold and extend Odoo modules in an OCA-compliant way for this workspace.
+---
 # Odoo Development Skill
 
 Purpose: Scaffold and extend Odoo modules in an OCA-compliant way for this workspace.
@@ -72,7 +76,9 @@ Use `odoo-module-scaffold` when creating a new module from scratch.
 
 ### Delegation Boundaries
 - New module scaffolding belongs to the `odoo-module-scaffold` skill
-- Substantive tests belong to the `odoo-tests` skill
+- Test authoring and refactoring belong to the `odoo-tests` skill
+- Container-based test execution belongs to the `odoo-tests-run-docker` skill
+- Installed-environment test execution belongs to the `odoo-tests-run-local` skill
 - Substantive readme/docs belong to the `odoo-documentation` skill
 - Migration work belongs to the `odoo-migrate-module` skill
 - Final compliance checks belong to the `odoo-validate-module` skill
@@ -83,8 +89,13 @@ Use `odoo-module-scaffold` when creating a new module from scratch.
 2. Inspect neighboring modules for style and patterns.
 3. If needed, query live schema via JSON-RPC.
 4. Create or update manifest, models, views, security, and data.
-5. Hand off to tests and documentation skills for deeper work.
-6. Run validation before considering the module ready.
+5. Hand off to `odoo-tests` to write or fix tests.
+6. Run tests with `odoo-tests-run-docker`, or `odoo-tests-run-local` when a working local Odoo installation already exists.
+7. Iterate on the narrowest failing slice.
+8. Run `odoo-validate-module` and fix errors before warnings.
+9. Update `readme/` documentation when behavior, config, or UI changed.
+10. Capture reusable lessons with `odoo-remember-feedback`.
+11. Report changed files, checks run, and remaining blockers.
 
 ## Output Expectations
 

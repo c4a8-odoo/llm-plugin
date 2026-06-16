@@ -1,6 +1,6 @@
 ---
 name: odoo-coding
-description: Odoo coding guide for.
+description: Odoo coding guide for version specific syntax and rules.
 ---
 
 # Odoo Coding Skill
