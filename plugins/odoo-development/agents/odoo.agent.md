@@ -5,7 +5,7 @@ description: |
   Use for: creating/extending modules, writing tests, generating documentation,
   validating module quality, and capturing reusable team patterns.
 user-invocable: true
-tools: ["*"]
+tools: [execute, read, edit, search, web, agent, todo, glob, grep]
 
 ---
 
