@@ -1,6 +1,6 @@
 ---
 name: odoo-tests-run-local
-description: Run Odoo tests against an existing local Odoo installation.
+description: Run Odoo tests against an existing local Odoo installation when already running inside a docker container.
 context: fork
 ---
 
