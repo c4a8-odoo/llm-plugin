@@ -30,13 +30,13 @@ Do not use this skill unless the environment already provides:
 Typical local execution shapes:
 
 ```bash
-odoo --addons-path=<addons_path> -d <database> -i <module> --test-enable --test-tags /<module> --stop-after-init
+/usr/bin/python3 /src/odoo/odoo-bin --config=/src/config/odoo.conf --addons-path=<addons_path> -d <database> -i <module> --test-enable --test-tags /<module> --stop-after-init
 ```
 
 For an already installed module under test, prefer update over install when appropriate:
 
 ```bash
-odoo --addons-path=<addons_path> -d <database> -u <module> --test-enable --test-tags /<module> --stop-after-init
+/usr/bin/python3 /src/odoo/odoo-bin --config=/src/config/odoo.conf --addons-path=<addons_path> -d <database> -u <module> --test-enable --test-tags /<module> --stop-after-init
 ```
 
 If the local environment uses `odoo-bin`, a wrapper script, or a config file, adapt the command to that existing setup rather than normalizing it.
