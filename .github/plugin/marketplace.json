@@ -5,7 +5,7 @@
     },
     "metadata": {
         "description": "C4A8 Odoo skills",
-        "version": "1.0.0"
+        "version": "1.0.1"
     },
     "plugins": [
         {
@@ -17,7 +17,7 @@
         {
             "name": "odoo-development",
             "description": "Odoo development plugin.",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": "./plugins/odoo-development"
         },
         {

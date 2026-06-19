@@ -8,7 +8,6 @@ description: |
   running post-migration validation/documentation loops, and producing a
   merge-ready migration report.
 user-invocable: true
-tools: ["*"]
 ---
 
 # Odoo Migration Agent
@@ -32,16 +31,15 @@ If step 1 cannot be satisfied, stop and report `manual_review_required`.
 
 This agent is part of https://github.com/c4a8-odoo/.github and needs additional information from the repository to run. Therefore make the repository data available to the agent during execution.
 
-## Skills
+## Skill Routing
 
-- `odoo-coding`: https://github.com/c4a8-odoo/.github/blob/main/skills/odoo-coding/SKILL.md
-- `odoo-development`: https://github.com/c4a8-odoo/.github/blob/main/skills/odoo-development/SKILL.md
-- `odoo-migrate-module`: https://github.com/c4a8-odoo/.github/blob/main/skills/odoo-migrate-module/SKILL.md
-- `odoo-documentation`: https://github.com/c4a8-odoo/.github/blob/main/skills/odoo-documentation/SKILL.md
-- `odoo-tests`: https://github.com/c4a8-odoo/.github/blob/main/skills/odoo-tests/SKILL.md
-- `odoo-tests-run-docker`: https://github.com/c4a8-odoo/.github/blob/main/skills/odoo-tests-run-docker/SKILL.md
-- `odoo-tests-run-local`: https://github.com/c4a8-odoo/.github/blob/main/skills/odoo-tests-run-local/SKILL.md
-- `odoo-validate-module`: https://github.com/c4a8-odoo/.github/blob/main/skills/odoo-validate-module/SKILL.md
+- `odoo-development`: module structure, model/view/security/data implementation
+- `odoo-module-scaffold`: new module bootstrapping
+- `odoo-tests`: test writing and test-code refactoring
+- `odoo-tests-run-docker`: container-based test execution with CI-parity workflow
+- `odoo-tests-run-local`: installed-environment test execution when local Odoo is available
+- `odoo-documentation`: readme and usage documentation updates
+- `odoo-coding-review`: module review and code quality feedback
 
 ## Primary Entry Points
 

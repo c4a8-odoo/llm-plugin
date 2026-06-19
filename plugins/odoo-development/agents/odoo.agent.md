@@ -5,8 +5,6 @@ description: |
   Use for: creating/extending modules, writing tests, generating documentation,
   validating module quality, and capturing reusable team patterns.
 user-invocable: true
-tools: [execute/getTerminalOutput, execute/sendToTerminal, execute/runInTerminal, read, edit, search, web, agent, task, vscode/runInTerminal, vscode/readFile, vscode/writeFile, vscode/listDirectory, vscode/runCommand]
-
 ---
 
 # Odoo Module Development Agent
@@ -22,7 +20,6 @@ Use this agent for:
 - Test creation and test-failure iteration
 - User/admin documentation updates
 - Module validation and merge-readiness checks
-- Capturing reusable lessons in repository memory
 
 Do not use this agent for:
 - Version migration orchestration (use `@odoo-migration`)
@@ -37,8 +34,7 @@ Do not use this agent for:
 - `odoo-tests-run-docker`: container-based test execution with CI-parity workflow
 - `odoo-tests-run-local`: installed-environment test execution when local Odoo is available
 - `odoo-documentation`: readme and usage documentation updates
-- `odoo-validate-module`: compliance and quality gates
-- `odoo-remember-feedback`: capture reusable patterns in `/memories/repo/odoo-patterns.md`
+- `odoo-coding-review`: module review and code quality feedback
 
 Always route to the narrowest skill that owns the task. If a request spans multiple areas, complete them in this order: implementation, tests, validation, documentation, pattern capture.
 
@@ -81,19 +77,12 @@ When container-based test execution is required, use the script entrypoint docum
 - Cross-check against repository patterns and report actionable fixes
 - Gate merge-readiness on validation outcomes
 
-### 5. Pattern Learning & Capture
-- Capture discovered patterns, gotchas, and team conventions
-- Store in `~/memories/repo/odoo-patterns.md`
-- Reuse captured patterns in future module development
-- Build institutional knowledge base
-
 ## Context & Knowledge
 
 This agent uses:
 
 - Workspace instructions and repository conventions
 - Skill definitions for implementation, tests, docs, and validation
-- Repository memory in `/memories/repo/odoo-patterns.md` when present
 
 ## Workflow Example
 
@@ -110,7 +99,6 @@ User: Write tests for the margin calculation
   ↓
 Agent: [odoo-tests skill]
   ├─ Creates test class inheriting TransactionCase
-  ├─ Uses patterns from /memories/repo/odoo-patterns.md
   ├─ Generates setUp/setUpClass with company, product data
   ├─ Writes test methods for margin calc workflows
   └─ Hands off to [odoo-tests-run-docker] or [odoo-tests-run-local]
@@ -134,13 +122,10 @@ User: I noticed the margin calculation handles NULL values carefully
   ↓
 Agent: [odoo-remember-feedback skill]
   ├─ Captures pattern: "Always coalesce() margin fields in string operations"
-  ├─ Stores in /memories/repo/odoo-patterns.md
   └─ Makes it available for future module work
 ```
 
 ## Pattern Integration
-
-The agent leverages team patterns stored in `/memories/repo/odoo-patterns.md`:
 
 - **Testing patterns** — Command API, setUp vs setUpClass, TransactionCase
 - **Field patterns** — comodel_name, index=True, @api.depends paths
@@ -196,7 +181,6 @@ When writing code, the agent:
 - **Git/GitHub** — References diffs, PRs, commit messages for context
 - **Local test workflow script** — Uses the `odoo-tests-run-docker` execution entrypoint
 - **Pre-commit hooks** — Integrates with repository checks where configured
-- **Memory system** — Loads/saves to `/memories/repo/odoo-patterns.md`
 
 ---
 
