@@ -30,7 +30,7 @@ Do not use this skill unless the environment already provides:
 Typical local execution shapes:
 
 ```bash
-/usr/bin/python3 /src/odoo/odoo-bin --config=/src/config/odoo.conf --addons-path=<addons_path> -d <database> --install=<module> --update=<module> --test-file=<testfile> --stop-after-init
+/usr/bin/python3 /src/odoo/odoo-bin --config=/src/config/odoo.conf --addons-path=<addons_path> -d <database> --init=<module> --update=<module> --test-file=<testfile> --stop-after-init --db_host=mydb --db_user=odoo --db_password=myodoo
 ```
 
 If the local environment uses `odoo-bin`, a wrapper script, or a config file, adapt the command to that existing setup rather than normalizing it.
