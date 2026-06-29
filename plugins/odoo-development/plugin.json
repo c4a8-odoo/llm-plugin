@@ -9,9 +9,5 @@
   "keywords": [
     "ai",
     "copilot"
-  ],
-  "agents": "agents/",
-  "skills": [
-    "skills/"
   ]
 }
