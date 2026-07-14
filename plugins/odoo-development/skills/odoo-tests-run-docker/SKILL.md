@@ -24,13 +24,13 @@ Use the workflow script as the single entrypoint for container-based test execut
 Default command:
 
 ```bash
-bash skills/odoo-tests-run-docker/scripts/run-test-workflow.sh
+bash ./scripts/run-test-workflow.sh
 ```
 
 This script replays the provided `test.yml` test job on the local working tree and runs the same command order used in CI:
 
 1. `oca_install_addons`
-2. `manifestoo -d . check-licenses`
+2. `manifestoo -d . check-licenses` 
 3. `manifestoo -d . check-dev-status --default-dev-status=Beta`
 4. `oca_init_test_database`
 5. `oca_run_tests`
@@ -42,31 +42,31 @@ The script provisions PostgreSQL with workflow-compatible credentials and runs i
 - Run both matrix images (Odoo + OCB):
 
 ```bash
-bash skills/odoo-tests-run-docker/scripts/run-test-workflow.sh --with-ocb
+bash ./scripts/run-test-workflow.sh --with-ocb
 ```
 
 - Restrict tests to one module:
 
 ```bash
-bash skills/odoo-tests-run-docker/scripts/run-test-workflow.sh --include <module>
+bash ./scripts/run-test-workflow.sh --include <module>
 ```
 
 - Override the test database name:
 
 ```bash
-bash skills/odoo-tests-run-docker/scripts/run-test-workflow.sh --db <database>
+bash ./scripts/run-test-workflow.sh --db <database>
 ```
 
 - Override the Python version:
 
 ```bash
-bash skills/odoo-tests-run-docker/scripts/run-test-workflow.sh --python-version <python_version>
+bash ./scripts/run-test-workflow.sh --python-version <python_version>
 ```
 
 - Override the Odoo version:
 
 ```bash
-bash skills/odoo-tests-run-docker/scripts/run-test-workflow.sh --odoo-version <odoo_version>
+bash ./scripts/run-test-workflow.sh --odoo-version <odoo_version>
 ```
 
 ## Iteration Rules

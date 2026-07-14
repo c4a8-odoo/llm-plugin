@@ -93,7 +93,7 @@ Before executing the script, make sure to fetch the full history from the remote
   3) ensure the bootstrap-added commits contain the full script patch series (optionally plus the pre-commit autofix commit).
 - If commit counts do not align or patch subjects are collapsed into a single commit, stop and escalate as `manual_review_required`.
 
-`migration-oca.sh`: https://github.com/c4a8-odoo/.github/blob/main/skills/odoo-migrate-module/scripts/migration-oca.sh
+`migration-oca.sh`: ./scripts/migration-oca.sh
 Usage: ./migration-oca.sh [old_version] [new_version] [module] [source_branch] [target_branch]
 [old_version] : The version you are migrating from (e.g. 18.0)
 [new_version] : The version you are migrating to (e.g. 19.0)
