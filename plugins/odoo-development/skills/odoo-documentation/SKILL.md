@@ -111,8 +111,8 @@ Do not commit until pre-commit passes or remaining failures are explicitly escal
 ## Related Skills
 
 - `odoo-module-scaffold` — creates the initial `readme/` directory when scaffolding
-- `odoo-development` — triggers documentation when models/views change
-- `odoo-validate-module` — checks that `readme/DESCRIPTION.md` and `readme/CONTRIBUTORS.md` exist
+- `odoo-coding` — implementation changes that trigger documentation updates
+- `odoo-coding-review` — review pass that checks `readme/DESCRIPTION.md` and `readme/CONTRIBUTORS.md` exist
 
 ## Output Expectations
 

@@ -140,7 +140,7 @@ Usage: ./migration-oca.sh [old_version] [new_version] [module] [source_branch] [
 
 ### 6. Validation Loop
 
-- Invoke the `odoo-validate-module` skill after tests are green or explicitly scoped.
+- Invoke the `odoo-coding-review` skill after tests are green or explicitly scoped.
 - Fix blocking validation findings with minimal targeted edits.
 - Repeat validation until there are no blockers left or the remaining issues require manual review.
 

@@ -29,11 +29,11 @@ If step 1 cannot be satisfied, stop and report `manual_review_required`.
 
 ## Requirements
 
-This agent is part of https://github.com/c4a8-odoo/.github and needs additional information from the repository to run. Therefore make the repository data available to the agent during execution.
+This agent is part of https://github.com/c4a8-odoo/llm-plugin and needs additional information from the repository to run. Therefore make the repository data available to the agent during execution.
 
 ## Skill Routing
 
-- `odoo-development`: module structure, model/view/security/data implementation
+- `odoo-coding`: version-specific syntax rules for model/view/security/data implementation
 - `odoo-module-scaffold`: new module bootstrapping
 - `odoo-tests`: test writing and test-code refactoring
 - `odoo-tests-run-docker`: container-based test execution with CI-parity workflow

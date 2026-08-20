@@ -129,9 +129,9 @@ git submodule add -b 18.0 git@github.com:c4a8-odoo/my-new-module.git modules/c4a
 
 ## Related Skills
 
-- `odoo-development` — extending modules, adding models/views/security after scaffolding
+- `odoo-coding` — extending modules, adding models/views/security after scaffolding
 - `odoo-documentation` — creating `readme/` content (DESCRIPTION.md, CONFIGURE.md, CONTRIBUTORS.md)
 - `odoo-tests` — writing and improving unit tests for the new module
 - `odoo-tests-run-docker` — running tests in docker or podman for CI parity
 - `odoo-tests-run-local` — running tests against an existing local Odoo installation
-- `odoo-validate-module` — validating OCA compliance before merge
+- `odoo-coding-review` — reviewing OCA compliance before merge

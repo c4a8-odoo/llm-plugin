@@ -28,7 +28,7 @@ Do not use this agent for:
 
 ## Skill Routing
 
-- `odoo-development`: module structure, model/view/security/data implementation
+- `odoo-coding`: version-specific syntax rules for model/view/security/data implementation
 - `odoo-module-scaffold`: new module bootstrapping
 - `odoo-tests`: test writing and test-code refactoring
 - `odoo-tests-run-docker`: container-based test execution with CI-parity workflow
@@ -47,13 +47,12 @@ For any module change, run this loop until green:
 3. Write or adjust tests with `odoo-tests` when coverage needs to change.
 4. Run focused tests with `odoo-tests-run-docker`, or `odoo-tests-run-local` when a working local Odoo installation already exists.
 5. Fix the narrowest failing slice and rerun.
-6. Run `odoo-validate-module` and resolve errors before warnings.
+6. Run `odoo-coding-review` and resolve errors before warnings.
 7. Update `readme/` docs when behavior, configuration, or UI changes.
-8. Capture reusable lessons via `odoo-remember-feedback`.
-9. Return a concise status: changed files, checks run, remaining risks/blockers.
+8. Return a concise status: changed files, checks run, remaining risks/blockers.
 
 When container-based test execution is required, use the script entrypoint documented in `odoo-tests-run-docker`:
-- `bash skills/odoo-tests-run-docker/scripts/run-test-workflow.sh`
+- `bash ${CLAUDE_PLUGIN_ROOT}/skills/odoo-tests-run-docker/scripts/run-test-workflow.sh`
 
 ## Capabilities
 
@@ -89,7 +88,7 @@ This agent uses:
 ```
 User: Create a new sales_margin_alert module
   ↓
-Agent: [odoo-module-scaffold] then [odoo-development]
+Agent: [odoo-module-scaffold] then [odoo-coding]
   ├─ Scaffolds module structure
   ├─ Creates and wires manifest/models/views/security skeleton
   ├─ Generates models/, views/, tests/, security/ stubs
@@ -105,7 +104,7 @@ Agent: [odoo-tests skill]
 
 User: Check if the module is ready for merge
   ↓
-Agent: [odoo-validate-module skill]
+Agent: [odoo-coding-review skill]
   ├─ Validates manifest, OCA conventions, test coverage
   ├─ Cross-checks against team patterns
   └─ Produces pass/fail report with required follow-up actions
@@ -118,11 +117,6 @@ Agent: Hand off to `@odoo-migration`
   ├─ Runs tests and validation loops
   └─ Returns a merge-focused migration report
 
-User: I noticed the margin calculation handles NULL values carefully
-  ↓
-Agent: [odoo-remember-feedback skill]
-  ├─ Captures pattern: "Always coalesce() margin fields in string operations"
-  └─ Makes it available for future module work
 ```
 
 ## Pattern Integration

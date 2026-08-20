@@ -38,19 +38,19 @@ Use this skill when the task involves:
 Always apply the base rules of resource @resources/code-rules.yaml. Also apply all rules of the resources, below the target version.
 
 ### 19.0 Additions
-- Use rules from @resources/odoo-coding-rules-19.0.yaml
+- Use rules from @resources/code-rules-19.0.yaml
 - 18.0 Additions
 
 ### 18.0 Additions
-- Use rules from @resources/odoo-coding-rules-18.0.yaml
+- Use rules from @resources/code-rules-18.0.yaml
 - 17.0 Additions
 
 ### 17.0 Additions 
-- Use rules from @resources/odoo-coding-rules-17.0.yaml
+- Use rules from @resources/code-rules-17.0.yaml
 - 16.0 Additions
 
 ### 16.0 Additions 
-- Use rules from @resources/odoo-coding-rules-16.0.yaml
+- Use rules from @resources/code-rules-16.0.yaml
 
 ## Output Contract For The Agent
 
