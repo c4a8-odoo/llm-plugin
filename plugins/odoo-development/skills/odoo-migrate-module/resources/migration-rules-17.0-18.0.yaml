@@ -492,4 +492,4 @@ supported_paths:
             - validation_pending
         action:
           kind: invoke_skill
-          skill: odoo-validate-module
+          skill: odoo-coding-review
