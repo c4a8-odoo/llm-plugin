@@ -1,6 +1,6 @@
 ---
 name: odoo-module-improvement
-description: Implement a general improvement in an OCA/Odoo module on a given version branch - bug fix from an issue, missing tests, new small feature, README/usage docs, performance fix, pre-commit or CI repair, access-rights hardening - with the right OCA commit tag, version bump, migration scripts when the data model changes, and a FIX/IMP/REF PR. Use whenever the user asks to fix, improve, refactor, add tests to, document or harden an existing Odoo/OCA module, or an automation picks up an issue for an in-scope module. Not for version migrations (odoo-module-migration) or ports (odoo-commit-porting). Follows odoo-task-core and ends with odoo-security-review.
+description: Implement a general improvement in an OCA/Odoo module on a given version branch - bug fix from an issue, missing tests, new small feature, README/usage docs, performance fix, pre-commit or CI repair, access-rights hardening - with the right OCA commit tag, a bump-size recommendation for the merge bot, migration scripts when the data model changes, and a FIX/IMP/REF PR. Use whenever the user asks to fix, improve, refactor, add tests to, document or harden an existing Odoo/OCA module, or an automation picks up an issue for an in-scope module. Not for version migrations (odoo-module-migration) or ports (odoo-commit-porting). Follows odoo-task-core and ends with odoo-security-review.
 ---
 
 # Odoo module improvement
@@ -9,8 +9,9 @@ Follow `odoo-task-core` first. Required arguments: `version`, `repo`, `module`, 
 `issue=<n>` or `task="<description>"`. Task name: `module-improvement`.
 
 An improvement PR is judged by OCA reviewers on three things: it does one thing, it proves it
-with a test, and its version bump and commit tag match the change. Keep those three in view
-and the rest follows.
+with a test, and its commit tag and recommended bump size match the change. Keep those three in
+view and the rest follows. The manifest `version` itself is not edited: the OCA bot bumps it at
+merge time (`ocabot merge patch|minor|major|nobump`).
 
 ## 1. Understand before touching
 
@@ -28,7 +29,8 @@ and the rest follows.
 ## 2. Plan mode
 
 `<stamp>_improvement-plan.md` in the log folder (`no-pr`): restated goal, root cause (for fixes,
-with file:line), files to change, test(s) to add with their assertions, version bump, migration
+with file:line), files to change, test(s) to add with their assertions, bump size for the merge
+command, migration
 script need, README fragments to touch, risks, PR title/body draft.
 
 ## 3. Draft and full modes
@@ -41,10 +43,13 @@ script need, README fragments to touch, risks, PR title/body draft.
    `odoo-task-core/references/oca-conventions.md` and avoid everything in
    `odoo-task-core/references/odoo-orm-pitfalls.md`. No drive-by refactors in the same commit;
    note them under **Follow-ups**.
-4. Data model changes (new stored field with required data, renamed/removed field, changed
-   selection): add `migrations/<new version>/pre-migrate.py` or `post-migrate.py` with
-   `openupgradelib`, and bump **major**. New optional field or new feature: **minor**. Pure fix:
-   **patch**. Docs/CI only: no bump.
+4. Do not edit the manifest `version`; the OCA bot bumps it when the PR is merged. Decide the
+   bump size and write it in the PR body: data model changes (new stored field with required
+   data, renamed/removed field, changed selection) are **major** and need
+   `migrations/<new version>/pre-migrate.py` or `post-migrate.py` with `openupgradelib`; because
+   the folder name must match, this is the one case where the PR bumps the manifest by hand and
+   asks for `ocabot merge nobump`. New optional field or new feature: **minor**. Pure fix:
+   **patch**. Docs/CI only: **nobump**.
 5. README fragments: `DESCRIPTION.rst`/`USAGE.rst`/`CONFIGURE.rst` when user-visible behaviour
    changes; `CONTRIBUTORS.rst` for the author; `ROADMAP.rst` if you leave a known limitation.
 6. `pre-commit run -a`, then one commit per logical change: `[FIX] <module>: <summary>` with a

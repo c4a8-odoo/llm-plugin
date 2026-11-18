@@ -45,7 +45,7 @@ ports. When `-x` is lost because the commit had to be rewritten, add the trailer
 
 | cause | resolution |
 |---|---|
-| manifest `version` differs | take TGT's version string, then apply the correct bump (patch/minor) |
+| manifest `version` differs | take TGT's current version string unchanged; drop the SRC bump hunk (the bot bumps at merge) |
 | `README.rst` / `static/description/index.html` | take TGT's version; regenerate with pre-commit |
 | `attrs`/`states` in the fix, TGT is 17+ | rewrite as `invisible=`/`readonly=` expressions |
 | `<tree>` in the fix, TGT is 18+ | use `<list>` |
@@ -54,12 +54,15 @@ ports. When `-x` is lost because the commit had to be rewritten, add the trailer
 | i18n `.po` conflicts | `git checkout --theirs`? No: drop the `.po` hunk entirely, translations are regenerated |
 | tests use fixtures renamed on TGT | adapt test, mention in the adaptation commit |
 
-## Version bump in a port
+## Version in a port
 
-The port PR gets its own bump on TGT. If the cherry-picked commit changed `"version": "18.0.1.2.1"`,
-the conflict resolution sets `"version": "19.0.1.0.1"` (TGT current + patch). Never leave a SRC
-version string in a TGT manifest; pre-commit does not catch it, CI does not either, but the
-OCA bot will refuse `ocabot merge` with a bump that does not match.
+The port PR does not bump the manifest: the OCA bot bumps it on TGT when the maintainer merges
+with `ocabot merge <patch|minor|...>`. If the cherry-picked commit changed
+`"version": "18.0.1.2.1"`, the conflict resolution restores TGT's current version string
+(for example `"version": "19.0.1.0.0"`) and drops the hunk. Never leave a SRC version string in a
+TGT manifest; pre-commit and CI do not catch it. State the bump size (patch for fixes, minor for
+features) in the PR body so the merger picks the right command. Only when the port carries
+`migrations/<version>/` scripts does the PR set the version by hand, with a note to merge `nobump`.
 
 ## Backports
 

@@ -122,6 +122,7 @@ unpushed commits).
 - Branch names: `<version>-<type>-<module>[-<topic>]`, for example `20.0-mig-partner_firstname`,
   `19.0-fix-partner_firstname-company_conversion`, `19.0-port-partner_firstname-pr1180`.
 - Commit messages and PR titles follow OCA conventions; see `references/oca-conventions.md`.
+  Commits produced with AI help carry an `Assisted-by:` trailer, never `Co-Authored-By:`.
 - Read `references/github-recipes.md` for the exact `gh` commands that create draft PRs, pending
   reviews, submitted reviews and comments. Draft mode uses the pending/draft variants only.
 - Before acting on a PR, read existing comments and reviews so you do not repeat them.

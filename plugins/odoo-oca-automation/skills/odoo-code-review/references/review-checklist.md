@@ -17,7 +17,7 @@ Tick what applies; the class column says where to look hardest. B = blocker, S =
 
 | check | class | level |
 |---|---|---|
-| Version bump matches change size (patch/minor/major; none for README/CI) | FIX, IMP, REF | B |
+| Manifest `version` untouched (the OCA bot bumps at merge); the review summary names the bump size for the merge command (patch/minor/major; nobump for README/CI). A manual bump is a remark to revert, except when migration scripts need the folder name | FIX, IMP, REF | S |
 | `[MIG]`: version `X.0.1.0.0`, `installable: True`, old `migrations/` folders removed | MIG | B |
 | `[ADD]`: all manifest keys per OCA conventions, `development_status`, `maintainers`, icon, readme fragments, `security/`, tests | ADD | B |
 | `depends` minimal and complete (every `env[...]`, `_inherit`, xml `ref` has a dependency) | all | S |

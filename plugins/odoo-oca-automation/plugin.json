@@ -1,7 +1,7 @@
 {
   "name": "odoo-oca-automation",
   "description": "Odoo automations to support OCA work.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Christopher Rogos"
   },

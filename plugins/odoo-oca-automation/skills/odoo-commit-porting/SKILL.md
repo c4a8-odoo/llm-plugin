@@ -1,6 +1,6 @@
 ---
 name: odoo-commit-porting
-description: Port commits or whole pull requests of an OCA/Odoo module between version branches (forward-port an 18.0 fix to 19.0, backport a 19.0 fix to 18.0, port to the next version 20.0) with git cherry-pick -x or oca-port, adapt them to the target API, bump the version, and open the port PR. Use whenever the user asks to forward-port, backport, cherry-pick, 'apply this fix to 19.0 too', or an automation checks which merged PRs are missing on newer branches. Follows odoo-task-core and ends with odoo-security-review.
+description: Port commits or whole pull requests of an OCA/Odoo module between version branches (forward-port an 18.0 fix to 19.0, backport a 19.0 fix to 18.0, port to the next version 20.0) with git cherry-pick -x or oca-port, adapt them to the target API, and open the port PR (the OCA bot bumps the version on merge). Use whenever the user asks to forward-port, backport, cherry-pick, 'apply this fix to 19.0 too', or an automation checks which merged PRs are missing on newer branches. Follows odoo-task-core and ends with odoo-security-review.
 ---
 
 # Odoo commit porting
@@ -35,7 +35,8 @@ function. Already present means status `skipped` with the evidence.
 `<stamp>_porting-plan.md` in the log folder (`no-pr`): list of commits with SHA, author, subject,
 files; already-ported checks; expected conflicts (files that differ between branches); API changes
 between source and target touching those files (from
-`odoo-module-migration/references/version-changes.md`); proposed version bump; PR title and body.
+`odoo-module-migration/references/version-changes.md`); recommended bump size for the merge
+command (the bot bumps on merge, the PR does not); PR title and body.
 
 ## 3. Draft and full modes
 
@@ -47,9 +48,10 @@ between source and target touching those files (from
 3. Adapt to the target API in a **separate follow-up commit** `[FIX] <module>: adapt port to <target>`
    when the change is more than a line or two; tiny adaptations may go into the cherry-picked
    commit with a note in the body.
-4. Version bump in the manifest, per OCA rules (patch for fixes, minor for features). If the
-   source PR already bumped the version, replace that hunk with the correct target bump instead
-   of carrying a source version string. Commit it with the port, not separately.
+4. Leave the manifest `version` at the target branch's current value: the OCA bot bumps it on
+   merge (`ocabot merge patch|minor`). If the source commit bumped the version, drop that hunk
+   rather than carrying a source version string. Name the bump size in the PR body. Only a port
+   that ships `migrations/<version>/` scripts sets the version by hand (then merge `nobump`).
 5. `pre-commit run -a`; tests if an Odoo of the target version is available.
 6. Push to the fork; PR titled with the **original tag and summary**, prefixed with the target:
    `[19.0][FIX] partner_firstname: keep lastname on company conversion`. Body:

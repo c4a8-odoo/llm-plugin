@@ -60,14 +60,28 @@ replace it); `installable: False` marks a module not yet migrated.
 
 ## Version bump rules
 
-| change | bump | OCA bot |
+**The version bump happens at merge time, not in the PR.** The OCA merge bot bumps the manifest
+`version` when a maintainer merges with `ocabot merge <patch|minor|major|nobump>`. A `[FIX]`,
+`[IMP]` or `[REF]` PR therefore leaves `__manifest__.py` `version` untouched; a manual bump in
+such a PR is a review remark ("drop the bump, the bot does it"), never a blocker. What the
+contributor and reviewer decide is the **bump size**, stated in the PR body or review summary so
+the merger picks the right command:
+
+| change | bump size | OCA bot command at merge |
 |---|---|---|
 | bug fix, typo, test only | patch `x.y.z+1` | `ocabot merge patch` |
 | new feature, new field without data migration | minor `x.y+1.0` | `ocabot merge minor` |
 | data model change needing migration scripts, behaviour break | major `x+1.0.0` | `ocabot merge major` |
 | README, translations, CI config | none | `ocabot merge nobump` |
 
-When bumping to a new major or minor and fields/models are renamed or removed, add
+Exceptions where the PR sets the version itself:
+
+- `[MIG]` PRs set `"version": "<target>.1.0.0"` in the migration commit.
+- PRs shipping `migrations/<version>/` scripts: the folder name must match the version the module
+  will have, so the PR bumps the manifest to that version by hand and the merger uses
+  `ocabot merge nobump`. Say so in the PR body.
+
+When a major or minor change renames or removes fields/models, add
 `migrations/<new version>/pre-migrate.py` / `post-migrate.py` using `openupgradelib` helpers.
 
 ## Commit messages
@@ -82,6 +96,18 @@ Tags: `[FIX]` bug fix, `[IMP]` improvement, `[ADD]` new module, `[REF]` refactor
 `[MIG]` migration to a new Odoo version, `[I18N]` translations, `[REV]` revert. Several modules:
 `[FIX] module_a, module_b: ...`. Never squash someone else's history; one logical change per commit.
 Keep the `(cherry picked from commit <sha>)` trailer that `git cherry-pick -x` adds when porting.
+
+AI attribution: when an AI assistant helped produce a commit, mark it with an `Assisted-by:`
+trailer, never `Co-Authored-By:` (the author of record is the human; the assistant is not a
+co-author). Put it last in the body, after any `(cherry picked from commit ...)` line:
+
+```
+[FIX] module_name: short imperative summary
+
+Body.
+
+Assisted-by: Claude <noreply@anthropic.com>
+```
 
 ## Pull requests
 

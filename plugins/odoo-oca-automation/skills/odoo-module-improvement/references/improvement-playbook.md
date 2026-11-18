@@ -1,5 +1,8 @@
 # Improvement playbook
 
+The **bump** column is the size to recommend for the merge command (`ocabot merge <bump>`);
+the PR itself leaves the manifest `version` untouched unless it ships migration scripts.
+
 | class | tag | bump | must include | typical traps |
 |---|---|---|---|---|
 | bug fix | `[FIX]` | patch | regression test; `Fixes #n` | fixing the symptom in the view instead of the compute; forgetting the same bug in a sibling method |
@@ -63,6 +66,8 @@ Closes #<issue>
 1. <steps or the test name>
 
 **Compatibility**: <none | migration script included | behaviour change for users who ...>
+
+**Merge bump**: <patch | minor | major | nobump> (the bot bumps the manifest on merge)
 
 @<maintainers>
 ```

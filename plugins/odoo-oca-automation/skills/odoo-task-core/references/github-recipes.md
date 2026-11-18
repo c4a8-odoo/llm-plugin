@@ -89,6 +89,8 @@ of your own user from an earlier run, either submit it (full) or delete and recr
 - Prefix the severity the maintainers should feel: `blocker:`, `should:`, `nit:`.
 - Do not comment on formatting pre-commit enforces, and do not repeat an existing comment; reply
   to it instead if you add information.
-- The summary body states the overall verdict and what remains to be done, in three to six lines.
+- The summary body states the overall verdict and what remains to be done, in three to six lines
+  (for code reviews it is the TL;DR part 2 from `odoo-code-review`). Anything tied to a file
+  and line is an inline comment, not a summary paragraph.
 - Never include anything from the local security review beyond what is directly visible in the
   diff and safe to state publicly (for example "missing access rule" is fine; an exploit path is not).
