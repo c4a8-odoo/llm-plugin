@@ -1,1 +1,24 @@
-../.github/plugin/marketplace.json
+{
+    "name": "c4a8-odoo-plugins",
+    "owner": {
+        "name": "Christopher Rogos"
+    },
+    "metadata": {
+        "description": "C4A8 Odoo skills",
+        "version": "1.0.2"
+    },
+    "plugins": [
+        {
+            "name": "odoo-development",
+            "description": "Odoo development plugin.",
+            "version": "1.0.2",
+            "source": "./plugins/odoo-development"
+        },
+        {
+            "name": "odoo-oca-automation",
+            "description": "Odoo automations to support OCA work.",
+            "version": "1.0.0",
+            "source": "./plugins/odoo-oca-automation"
+        }
+    ]
+}
