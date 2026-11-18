@@ -1,0 +1,13 @@
+{
+  "name": "odoo-oca-automation",
+  "description": "Odoo automations to support OCA work.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Christopher Rogos"
+  },
+  "license": "AGPL-3.0",
+  "keywords": [
+    "ai",
+    "claude"
+  ]
+}
