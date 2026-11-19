@@ -1,6 +1,6 @@
 ---
 name: odoo-task-core
-description: Shared contract for every Odoo/OCA automation skill (odoo-code-review, odoo-module-migration, odoo-commit-porting, odoo-module-improvement, odoo-security-review). Defines the run modes plan/draft/full, the scope gate against config/automation.yaml, the task log layout logs/<odoo_version>/<repo>/<module>/<pr>/, argument parsing, OCA commit and PR conventions, and the mandatory closing security review. Read this FIRST whenever any odoo-* skill runs, whenever the user mentions automation modes, task logs, scope configuration, OCA conventions, or asks how an Odoo automation should behave.
+description: Shared contract for every Odoo/OCA automation skill (odoo-pr-review, odoo-code-review, odoo-module-migration, odoo-commit-porting, odoo-module-improvement, odoo-security-review). Defines the run modes plan/draft/full, the scope gate against config/automation.yaml, the task log layout logs/<odoo_version>/<repo>/<module>/<pr>/, argument parsing, OCA commit and PR conventions, the shared frame for pull request reviews (gathering, TL;DR, delivery per mode, combined structural + functional runs), and the mandatory closing security review. Read this FIRST whenever any odoo-* skill runs, whenever the user mentions automation modes, task logs, scope configuration, OCA conventions, or asks how an Odoo automation should behave.
 ---
 
 # Odoo task core
@@ -42,9 +42,10 @@ Resolution order for anything missing: explicit argument, then environment varia
 missing `source_version` for a migration to `previous_version` of the target. If `version`, `repo` or `module` cannot be resolved, ask once in an
 interactive session; in a non-interactive run, write a `blocked` log and stop.
 
-For `pr`-driven tasks (code review) derive `module` from the files touched by the PR. A PR that
-touches several modules is handled once per module that is in scope; modules out of scope are
-mentioned in the log but not reviewed.
+For `pr`-driven tasks (`pr-review`, `code-review`) derive `module` from the files touched by
+the PR. A PR that touches several modules is handled once per module that is in scope; modules
+out of scope are mentioned in the log but not reviewed. Section 9 describes the frame both
+review skills share.
 
 ## 3. Modes
 
@@ -130,16 +131,21 @@ unpushed commits).
 ## 7. Closing security review
 
 Every task ends with the `odoo-security-review` skill on the module as it exists after your
-changes (or, for a code review, the PR head). It writes `<timestamp>_security-review.md` next to
+changes (or, for a PR review, the PR head). It writes `<timestamp>_security-review.md` next to
 the task log and records medium-or-higher findings under
 `security/<odoo_version>/<repo>/<module>/`. The security review is local only: never post it,
 quote it in PR bodies or review comments, or push it. In the task log, the **Security review**
 section holds only the counts per severity and the file name.
 
+One PR head gets one security review: when `odoo-pr-review` and `odoo-code-review` run on the
+same head SHA in one session (section 9), the review runs once after the last skill and both
+logs name the same report file.
+
 ## 8. Reference material
 
 - `references/oca-conventions.md`: module layout, manifest, README fragments, naming, commit and
   PR message format, version bump rules, OCA bot commands.
+- `references/pr-review-frame.md`: the shared procedure for pull request reviews (section 9).
 - `references/odoo-orm-pitfalls.md`: Odoo API and ORM mistakes worth looking for when reviewing or
   writing code.
 - `references/github-recipes.md`: gh/API commands per mode.
@@ -150,3 +156,24 @@ section holds only the counts per severity and the file name.
   thin wrapper with the same arguments for PowerShell users (run with
   `powershell -NoProfile -ExecutionPolicy Bypass -File ...` if script execution is disabled). If
   Python is missing, perform the same steps by hand, matching the layouts described here exactly.
+
+## 9. Pull request reviews
+
+Two skills review PRs, each with its own task name and checklist, and they share one frame:
+
+| skill | task | judges |
+|---|---|---|
+| `odoo-pr-review` | `pr-review` | structure: commit messages and PR title, one change per commit/PR, manifest changes, build pipeline, coding style beyond pre-commit, docs fragments |
+| `odoo-code-review` | `code-review` | function: does the change do what it claims, ORM/API correctness, access rights, migration scripts, meaningful tests, fit with the module and the OCA ecosystem |
+
+A request to review a PR that does not name one aspect means both, in that order:
+`odoo-pr-review` first (cheap, catches what the author must fix anyway), then
+`odoo-code-review` on the same head SHA. A request about commits, CI, style or the manifest
+means the PR review alone; a request about whether the change works, is correct or is the
+right approach means the code review alone. Each skill stays inside its column: a structural
+finding noticed during the code review (or the reverse) is not commented on but handed to the
+other skill (**Follow-ups** when standalone, nothing when the other skill runs in the same
+session).
+
+Full procedure, shared rules for gathering, the TL;DR format every review output starts with,
+delivery per mode, combined runs and the security hand-off: `references/pr-review-frame.md`.

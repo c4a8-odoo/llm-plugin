@@ -1,115 +1,136 @@
 ---
 name: odoo-code-review
-description: Review a pull request in an OCA/Odoo repository against OCA conventions, Odoo ORM/API correctness, tests and migration rules, then produce a review plan (plan mode), a pending GitHub review (draft mode) or a submitted review (full mode). Use for any request to review, check, assess or comment on an Odoo/OCA PR, including automated review runs over open PRs of in-scope modules. Follows odoo-task-core and ends with odoo-security-review.
+description: Review the functional correctness of a pull request in an OCA/Odoo repository and whether the change fits the Odoo/OCA ecosystem - does it do what the PR claims, Odoo ORM/API correctness (compute/depends, create/write, search, sudo, SQL, translations, multi-company), access rights for new models, migration scripts when the data model changes, tests that prove the behaviour, APIs valid on the target version, the right module and extension point, no duplicate of an existing OCA module, no breakage for modules that depend on it. Produces a review plan (plan mode), a pending GitHub review (draft mode) or a submitted review (full mode). Use when asked whether a PR works, is correct, is the right approach or belongs in OCA; a plain "review this PR" runs odoo-pr-review first and then this skill. Does not comment on commit messages, manifest version, CI or style (that is odoo-pr-review). Follows odoo-task-core and ends with odoo-security-review.
 ---
 
-# Odoo code review
+# Odoo code review (functional correctness and ecosystem fit)
 
-Follow `odoo-task-core` first: arguments, mode, scope gate, task log, closing security review.
-This skill adds what a useful OCA review looks like and how each mode delivers it.
+Follow `odoo-task-core` first: arguments, mode, scope gate, task log, and section 9 (the shared
+frame for pull request reviews: gathering, TL;DR, delivery per mode, combined runs, closing
+security review). This skill adds what a functional OCA review looks at.
 
 Required arguments: `version`, `repo`, `pr`. `module` is derived from the PR files when not
 given. Task name for the log and the scope gate: `code-review`.
 
-## 1. Gather
+## 1. What this skill judges, and what it leaves alone
 
-1. `gh pr view` with files, commits, reviews, comments, labels, `isDraft`, `baseRefName`.
-   The base branch must equal `version`; if not, log `blocked` (wrong target branch) and stop.
-2. Derive the modules touched. Run the scope gate per module. Review only in-scope modules;
-   list the others under **Context** in the log.
-3. `gh pr diff`, `gh pr checks`, existing inline comments and reviews. If a maintainer already
-   asked for changes that are still open, your review adds to it rather than restating it.
-4. Fetch the head into the local clone (`git fetch origin pull/N/head:pr-N`) when you need to
-   read files beyond the diff, run `pre-commit`, or inspect tests. Reading the whole module is the
-   norm for `[MIG]` and `[ADD]` PRs; the diff is enough for small `[FIX]`es.
-5. Classify the PR from its title tag: `[ADD]`, `[MIG]`, `[FIX]`, `[IMP]`, `[REF]`, `[I18N]`,
-   `[REM]`. The checklist weights differ per class.
+In scope: whether the change works and whether it belongs.
 
-## 2. Review
+- Does the code do what the PR body and the linked issue say, for every case it touches,
+  including the ones the author did not think of (empty recordsets, multi-record, multi-company,
+  inactive records, the UI path and the API path).
+- Odoo ORM and API correctness on the target version.
+- Access rights and migration scripts that the change makes necessary.
+- Tests that prove the behaviour, not just tests that exist.
+- Ecosystem fit: right module, right extension point, no duplicate of existing OCA work, no
+  silent behaviour change for existing users, no breakage for modules that inherit from or
+  depend on this one.
 
-Work through `references/review-checklist.md` in this order and stop collecting when you have
-what matters; a review with four precise comments beats one with forty.
+Out of scope: commit messages, PR title, manifest version, CI status, formatting, naming,
+file layout, README fragments. That is `odoo-pr-review`. When you notice such a problem, do not
+comment on it: in a combined run it is already covered; standalone, write it under
+**Follow-ups** as `odoo-pr-review pr=<n>` with one line saying what to look at. The one
+exception is a CI test failure in the module under review: read it, because it usually points
+at a functional problem, and comment on the cause, not on the red job.
 
-1. **Blockers**: wrong base branch, missing ACL for new models,
-   broken migration scripts, tests missing for behavioural changes, PR mixing unrelated changes,
-   `sudo()` or raw SQL without justification, API usage removed in the target version.
-   A missing version bump is **not** a finding: the OCA bot bumps the manifest at merge time
-   (`ocabot merge patch|minor|major|nobump`). State the bump size you recommend in the review
-   summary instead, and ask for a manual bump to be dropped unless migration scripts need it.
-2. **Correctness**: `odoo-task-core/references/odoo-orm-pitfalls.md`. Trace compute/depends,
-   create/write overrides, search loops, onchange-vs-compute, translations.
-3. **OCA conventions**: `odoo-task-core/references/oca-conventions.md`. Manifest, README
-   fragments, headers, naming, commit messages, PR title. Do not comment on what pre-commit
-   enforces; check instead whether CI is green and say so if it is not.
+## 2. Understand the intent before judging the code
+
+1. Read the PR body, the linked issue and the discussion. Write the claim in one sentence in
+   the log's **Context**: "makes X happen when Y". The review measures the diff against that.
+2. Read `readme/DESCRIPTION.rst` and the module's models to know what the module promises.
+3. Find who else depends on what the PR touches: grep the repo (and the well-known dependants
+   listed in the module's README or `gh search code`) for `_inherit` of the models, calls of
+   the renamed or changed methods, `inherit_id` of the changed views, `ref=` of the changed
+   XML ids. A change that is right for this module and breaks three others is not right.
+4. Fetch the head (`git fetch origin pull/N/head:pr-N`) and read the surrounding code, not only
+   the diff; the bug is often in the lines the diff did not touch. Read the whole module for
+   `[MIG]` and `[ADD]`.
+
+## 3. Review
+
+Work through `references/review-checklist.md` and stop collecting when you have what matters; a
+review with four precise comments beats one with forty.
+
+1. **Blockers**: the change does not do what it claims, or breaks a case it must handle; new
+   model without `ir.model.access.csv` lines; field removed or renamed without a migration
+   script; migration script that cannot run (wrong folder, wrong API, no `openupgradelib`
+   guard); API that no longer exists on the target version; `sudo()` or raw SQL that changes
+   what a user may see or do without a stated reason; behaviour change without a test; a
+   method or field that other OCA modules use, renamed or removed without a shim.
+2. **Correctness**: `odoo-task-core/references/odoo-orm-pitfalls.md`. Trace every compute and
+   its `@api.depends`; every `create`/`write`/`unlink` override for `super()` and multi-record
+   handling; every search for the missing `active`/company filter and the order with `limit=1`;
+   onchange vs compute; `ensure_one()` where singleton semantics are assumed; translations
+   evaluated at the right time; defaults from `self.env.company`, not the user's first company.
+3. **Ecosystem fit**: is this the right module (or should it live in the module that owns the
+   model, or in an existing OCA module that already does it: search the repo and
+   `gh search repos --owner OCA`); does it use the extension point Odoo offers (`_inherit`,
+   hooks, `_get_*` methods, view inheritance) instead of copying core code or monkey-patching;
+   is it generic and configurable rather than one customer's rule; does it keep the current
+   behaviour as the default for existing users (new behaviour opt-in via a setting or a field
+   default); does it pull in Enterprise or a dependency the repo does not accept; if it works
+   around a core bug, say that the fix belongs in `odoo/odoo` and the workaround should be
+   marked as such.
 4. **Class-specific**: for `[MIG]` apply `odoo-module-migration/references/version-changes.md`
-   for the target version and check the commit sequence (history kept, pre-commit commit, MIG
-   commit, old migration scripts removed, version `X.0.1.0.0`). For `[FIX]` check that a test
-   reproduces the bug. For `[ADD]` check module naming, dependencies and that it does not
-   duplicate an existing OCA module (search the repo and `gh search repos`).
-5. **Functional sanity**: does the change do what the PR body claims? If runboat is green and
-   the change is UI-related, mention that a manual check on runboat is still needed.
+   for source..target and check that behaviour is preserved, not just that it installs. For
+   `[FIX]` check that the test fails without the fix and that the fix addresses the cause, not
+   the symptom. For `[ADD]` check the data model (names, relations, required fields, company
+   scoping) because it is hard to change after release. For `[IMP]` check backwards
+   compatibility. For `[REF]` check that behaviour is unchanged and the tests still assert
+   something.
+5. **Tests**: do they exercise the changed path and assert the outcome, cover the constraint
+   and permission paths, and would they fail if the change were reverted? A test that only
+   calls the method is not a test of the behaviour. Test style and tags are `odoo-pr-review`'s.
+6. **Functional sanity**: for UI changes, say that a manual check on runboat is still needed
+   and what to click; for reports and wizards, check the demo data makes the path reachable.
 
 Each finding becomes one inline comment with a severity prefix (`blocker:`, `should:`, `nit:`),
-the consequence, and the fix, as a ```suggestion block when a one-liner does it. Detail lives in
-those inline comments, anchored to the changed lines; the summary body is the TL;DR part 2
-below: verdict (looks good / needs changes / needs discussion), the blockers in one line each,
-and thanks. Write for the author, who is usually a volunteer.
+the consequence ("this recomputes for every line change", "this returns the first company's
+value for a user in company B"), and the fix, as a ```suggestion block when a one-liner does
+it. Write for the author, who is usually a volunteer: explain the Odoo mechanism behind the
+finding in one sentence when it is not obvious.
 
-Automations never `APPROVE` unless `allow_approve` is true, and never `REQUEST_CHANGES` when
-`allow_request_changes` is false; `COMMENT` is always available. A review with blockers in
-`full` mode uses `REQUEST_CHANGES` when allowed, otherwise `COMMENT` with the blockers listed.
+## 4. TL;DR specifics
 
-## 3. Report: TL;DR first
-
-Every review output (the plan file, the task log, the final message to the user) **starts with a
-`## TL;DR` section** placed right after the header table and before **Context**. It has two parts,
-ten lines at most in total, and it is written for someone who reads nothing else:
-
-**Part 1: PR status.** Three to five lines. State whether the PR is ready (ready to merge /
-needs changes / needs discussion / blocked), what it tries to improve in one sentence, whether
-that is a good idea for the module and the OCA repo, and the recommended merge bump. Then only
-what needs attention: blockers, open questions, risks, missing tests. Do **not** list what
-passed (green CI, conventions met, version rules respected); that belongs in the detailed
-sections further down.
-
-**Part 2: Suggested review response.** The summary text to post as the review body, three to
-six lines, quoted verbatim so it can be copied: verdict, blockers in one line each, bump size
-for the merger, thanks. Everything with a file and line (findings, suggestions, nits) goes into
-the inline comments on the changed code, not into this summary.
-
-Example:
+Follow the TL;DR format from `odoo-task-core` section 9. Part 1 opens with `**Status:**`
+(ready to merge / needs changes / needs discussion / blocked), what the PR tries to improve in
+one sentence, whether that is a good idea for the module and the OCA repo, and the recommended
+merge bump. Then only what needs attention: blockers, open questions, risks, missing tests.
+Do **not** list what passed. Part 2 is the review body to post.
 
 ```markdown
 ## TL;DR
 
 **Status:** needs changes. Moves the stage default from the view to a compute on
-`project.task`; sensible, it fixes the reported bug at the source. Merge bump: patch.
-Needs attention: no regression test for the reported case; `sudo()` on line 42 is unjustified.
+`project.task`; sensible, it fixes the reported bug at the source and keeps the behaviour for
+existing users. Merge bump: patch.
+Needs attention: no regression test for the reported case; `sudo()` on line 42 is unjustified;
+`project_task_stage_mgmt` overrides the same default and will now lose.
 
 **Suggested review response:**
 > Thanks for the fix, the compute is the right place for this.
 > blocker: please add a test reproducing #123 before merge.
 > blocker: `sudo()` in `_compute_stage_id` is not needed, see inline comment.
+> should: `project_task_stage_mgmt` sets the same default; see inline comment for a way to let
+> both coexist.
 > Suggested merge: `ocabot merge patch`.
 ```
 
-## 4. Deliver per mode
+## 5. Deliver
 
-| mode | deliverable |
-|---|---|
-| `plan` | `logs/<v>/<repo>/<module>/pr-<n>/<stamp>_review-plan.md`: TL;DR (section 3), PR classification, files to inspect, checks to run, questions to answer, draft of expected comments. No GitHub writes. |
-| `draft` | PENDING review created via the API (see `odoo-task-core/references/github-recipes.md`) with the TL;DR part 2 as its body; the review JSON is also saved as `<stamp>_review.json` in the log folder. If a pending review of ours exists, delete and recreate it. |
-| `full` | Review submitted with `COMMENT` or `REQUEST_CHANGES`, TL;DR part 2 as its body. If the PR is a draft on GitHub, submit anyway; the author asked for early feedback by opening it. |
+Per mode exactly as `odoo-task-core` section 9 describes. In a combined run (after
+`odoo-pr-review` on the same PR) merge the stored `<stamp>_pr-review-comments.json` into your
+review payload and write the combined body: your status line first, then the structural
+blockers from the PR review, then the bump size and thanks. The verdict is "needs changes"
+when either skill found a blocker.
 
-In all modes, the task log opens with the TL;DR and its **Outcome** lists the comment count by
-severity and the review URL (or JSON path). The final message to the user is the TL;DR followed
-by the log path; do not repeat the inline comments there. **Follow-ups** suggests `odoo-module-improvement` or porting tasks when the
-review found work the automation could do (for example "tests missing": offer
-`task="add tests for ..."`).
+**Follow-ups** suggests `odoo-module-improvement` or porting tasks when the review found work
+the automation could do (for example "tests missing": offer `task="add tests for ..."`), and
+`odoo-pr-review` when it did not run in the same session.
 
-## 5. Hand-off to the security review
+## 6. Hand-off to the security review
 
-Pass the PR head path, the diff, and the list of files changed. Findings marked `introduced` at
-or above `block_full_on_severity` must appear in the review as blockers, phrased safely (see
-security skill section "What to say to the maintainers"). Pre-existing findings are not part of
-the public review unless the PR touches the same lines.
+Pass the PR head path, the diff, and the list of files changed. Findings marked `introduced`
+at or above `block_full_on_severity` must appear in the review as blockers, phrased safely (see
+security skill section "What to say to the maintainers"). Pre-existing findings are not part
+of the public review unless the PR touches the same lines.

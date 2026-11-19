@@ -1,6 +1,6 @@
 ---
 name: odoo-security-review
-description: Local-only security analysis of an Odoo/OCA module (access rights, record rules, sudo, SQL injection, controllers, QWeb/XSS, file handling, secrets, external calls). Runs automatically as the LAST step of every odoo-* task (code review, migration, porting, improvement) and whenever the user asks for a security review, audit, vulnerability check or hardening of an Odoo module or PR. Writes the report next to the task log and records medium-or-higher findings under security/<odoo_version>/<repo>/<module>/. Never posts anything to GitHub.
+description: Local-only security analysis of an Odoo/OCA module (access rights, record rules, sudo, SQL injection, controllers, QWeb/XSS, file handling, secrets, external calls). Runs automatically as the LAST step of every odoo-* task (PR review, code review, migration, porting, improvement; a combined PR + code review on one head gets a single security review) and whenever the user asks for a security review, audit, vulnerability check or hardening of an Odoo module or PR. Writes the report next to the task log and records medium-or-higher findings under security/<odoo_version>/<repo>/<module>/. Never posts anything to GitHub.
 ---
 
 # Odoo security review
@@ -14,9 +14,10 @@ so even in `full` mode this skill never comments, pushes or opens issues.
 ## When it runs
 
 - At the end of every odoo-* task, on the module as it exists after that task (the PR head for
-  a code review, the working tree for a migration/port/improvement). The parent task passes
+  a PR or code review, the working tree for a migration/port/improvement). The parent task passes
   `version`, `repo`, `module`, `pr`, `workdir` and, when available, the diff of what the parent
-  task changed or reviewed.
+  task changed or reviewed. When `odoo-pr-review` and `odoo-code-review` run back to back on the
+  same PR head, run once, after the code review; the PR review's log points at the same report.
 - Standalone, when a user asks for it. Then run the scope gate and create your own task log
   (`task=security-review`) before doing the review.
 

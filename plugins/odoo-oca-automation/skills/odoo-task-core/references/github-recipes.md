@@ -90,7 +90,28 @@ of your own user from an earlier run, either submit it (full) or delete and recr
 - Do not comment on formatting pre-commit enforces, and do not repeat an existing comment; reply
   to it instead if you add information.
 - The summary body states the overall verdict and what remains to be done, in three to six lines
-  (for code reviews it is the TL;DR part 2 from `odoo-code-review`). Anything tied to a file
-  and line is an inline comment, not a summary paragraph.
+  (for PR reviews it is the TL;DR part 2 from `odoo-pr-review` / `odoo-code-review`, see
+  `pr-review-frame.md`). Anything tied to a file and line is an inline comment, not a summary
+  paragraph.
+- Findings without a line in the diff (commit messages, missing CI job, PR body) go into the
+  summary body as one short list, not as inline comments on an arbitrary line.
+
+## Combined runs: one review from two skills
+
+When `odoo-pr-review` runs before `odoo-code-review` on the same PR, only the last skill
+creates the GitHub review. The first skill writes its `comments` array to
+`<stamp>_pr-review-comments.json` in the log folder; the second merges it into its own payload:
+
+```bash
+# review.json holds the code review payload; merge the stored structural comments into it
+jq --slurpfile pr "$LOG/<stamp>_pr-review-comments.json" \
+   '.comments += $pr[0]' review.json > merged.json
+gh api --method POST repos/OWNER/REPO/pulls/N/reviews --input merged.json            # draft: PENDING
+gh api --method POST repos/OWNER/REPO/pulls/N/reviews --input merged.json -f event=COMMENT   # full
+```
+
+The stored file is the bare JSON array of comment objects (`path`, `line`, `side`, `body`),
+nothing else. The body of the merged review is the combined TL;DR part 2: the code review's
+status line, the structural blockers, the bump size, thanks.
 - Never include anything from the local security review beyond what is directly visible in the
   diff and safe to state publicly (for example "missing access rule" is fine; an exploit path is not).
