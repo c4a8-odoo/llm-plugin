@@ -14,9 +14,9 @@ unlikely configuration, one step up if the affected data is personal, financial 
 
 ## Rules
 
-- Recorded in the security folder: medium and above (configurable via `security_min_severity`).
+- Recorded in the security folder: medium and above (the caller can change it with `security_min_severity`).
 - Blocks a `full` submission when introduced by the automation's own change: `block_full_on_severity`
-  and above (shipped as `high`). Pre-existing findings never block; they are reported.
+  and above (default `high`, the caller can change it). Pre-existing findings never block; they are reported.
 - A finding that is reachable only by a user who already has `base.group_system` is at most low.
 - If you cannot trace a concrete input to the sink, write it as `unclear` in the report with the
   severity it would have if confirmed, and do not record it in the security folder.

@@ -1,7 +1,7 @@
 # GitHub recipes per mode
 
-All commands use the authenticated `gh` CLI. `OWNER/REPO` is the `github` slug printed by
-`check-scope` (for example `OCA/project`), `N` the PR or issue number. Every command that changes
+All commands use the authenticated `gh` CLI. `OWNER/REPO` is the `github` argument (default
+`OCA/<repo>`, for example `OCA/project`), `N` the PR or issue number. Every command that changes
 something on GitHub belongs in the task log with the resulting URL.
 
 ## Read-only (allowed in every mode)
@@ -71,7 +71,7 @@ Put the review payload in a JSON file:
 gh api --method POST repos/OWNER/REPO/pulls/N/reviews --input review.json
 
 # full mode: submit directly (event COMMENT | REQUEST_CHANGES | APPROVE)
-#   APPROVE only when defaults.allow_approve is true; REQUEST_CHANGES only when allow_request_changes is true
+#   APPROVE only when allow_approve=true was passed; REQUEST_CHANGES only when allow_request_changes=true was passed
 gh api --method POST repos/OWNER/REPO/pulls/N/reviews --input review.json -f event=COMMENT
 
 # full mode: submit a pending review left by an earlier draft run

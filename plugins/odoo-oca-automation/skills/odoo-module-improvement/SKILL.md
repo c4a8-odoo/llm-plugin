@@ -1,6 +1,6 @@
 ---
 name: odoo-module-improvement
-description: Implement a general improvement in an OCA/Odoo module on a given version branch - bug fix from an issue, missing tests, new small feature, README/usage docs, performance fix, pre-commit or CI repair, access-rights hardening - with the right OCA commit tag, a bump-size recommendation for the merge bot, migration scripts when the data model changes, and a FIX/IMP/REF PR. Use whenever the user asks to fix, improve, refactor, add tests to, document or harden an existing Odoo/OCA module, or an automation picks up an issue for an in-scope module. Not for version migrations (odoo-module-migration) or ports (odoo-commit-porting). Follows odoo-task-core and ends with odoo-security-review.
+description: Implement a general improvement in an OCA/Odoo module on a given version branch - bug fix from an issue, missing tests, new small feature, README/usage docs, performance fix, pre-commit or CI repair, access-rights hardening - with the right OCA commit tag, a bump-size recommendation for the merge bot, migration scripts when the data model changes, and a FIX/IMP/REF PR. Use whenever the user asks to fix, improve, refactor, add tests to, document or harden an existing Odoo/OCA module, or an automation picks up an issue for a module it names. Not for version migrations (odoo-module-migration) or ports (odoo-commit-porting). Follows odoo-task-core and ends with odoo-security-review.
 ---
 
 # Odoo module improvement

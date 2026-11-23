@@ -5,12 +5,12 @@ description: Review the functional correctness of a pull request in an OCA/Odoo 
 
 # Odoo code review (functional correctness and ecosystem fit)
 
-Follow `odoo-task-core` first: arguments, mode, scope gate, task log, and section 9 (the shared
+Follow `odoo-task-core` first: arguments, mode, required inputs, task log, and section 9 (the shared
 frame for pull request reviews: gathering, TL;DR, delivery per mode, combined runs, closing
 security review). This skill adds what a functional OCA review looks at.
 
-Required arguments: `version`, `repo`, `pr`. `module` is derived from the PR files when not
-given. Task name for the log and the scope gate: `code-review`.
+Required arguments: `version`, `repo`, `pr`. `module` limits the review to those modules;
+without it, every module the PR touches is reviewed. Task name for the log: `code-review`.
 
 ## 1. What this skill judges, and what it leaves alone
 

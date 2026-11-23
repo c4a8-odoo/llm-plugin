@@ -5,7 +5,7 @@
     },
     "metadata": {
         "description": "C4A8 Odoo skills",
-        "version": "1.0.2"
+        "version": "1.0.3"
     },
     "plugins": [
         {
@@ -17,7 +17,7 @@
         {
             "name": "odoo-oca-automation",
             "description": "Odoo automations to support OCA work.",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": "./plugins/odoo-oca-automation"
         }
     ]

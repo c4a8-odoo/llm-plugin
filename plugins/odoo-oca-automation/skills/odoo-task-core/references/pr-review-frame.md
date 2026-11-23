@@ -8,8 +8,8 @@ are referenced from the skills as "task-core section 9".
 
 1. `gh pr view` with files, commits, reviews, comments, labels, `isDraft`, `baseRefName`.
    The base branch must equal `version`; if not, log `blocked` (wrong target branch) and stop.
-2. Derive the modules touched. Run the scope gate per module with the skill's task name.
-   Review only in-scope modules; list the others under **Context** in the log.
+2. Derive the modules touched. Without a `module` argument review all of them; with one,
+   review only the named modules and list the others under **Context** in the log.
 3. `gh pr diff`, `gh pr checks`, existing inline comments and reviews. If a maintainer already
    asked for changes that are still open, your review adds to it rather than restating it.
 4. Fetch the head into the local clone (`git fetch origin pull/N/head:pr-N`) when you need to
@@ -69,8 +69,8 @@ by the log path; do not repeat the inline comments there.
 A plain "review this PR" runs `odoo-pr-review` and then `odoo-code-review` on the same head
 SHA. Rules:
 
-- Each skill runs its own scope gate (task names differ and the config may allow only one) and
-  writes its own task log in the same `pr-<n>` folder.
+- Both skills get the same arguments from the caller, and each writes its own task log in
+  the same `pr-<n>` folder.
 - GitHub gets **one** review per run. The PR review does not create it; it stores its comments
   as `<stamp>_pr-review-comments.json` (bare array of comment objects) in the log folder and
   notes the path under **Outcome**. The code review merges that file into its payload (recipe in
@@ -78,7 +78,7 @@ SHA. Rules:
 - The verdict of the merged review is "needs changes" when either skill found a blocker.
 - The security review runs once, after the code review. The PR review's **Security review**
   section names that report; it does not run its own.
-- If the code review cannot run (out of scope for `code-review`, blocked), the PR review's
+- If the code review cannot run (blocked, or the caller asked for the PR review alone), the PR review's
   stored comments are posted by the PR review itself before the run ends, and its log says why
   the code review was skipped.
 

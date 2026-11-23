@@ -21,7 +21,7 @@ unrecognisable after conflict resolution, and then say so in the commit body.
   commit SHAs; skip bot commits (`[UPD] README.rst`, `[UPD] addons table`, translation updates by
   `oca-transbot`/weblate), they are regenerated on the target.
 - `commits=<sha,...>`: fetch each, read its message and files; refuse (log `blocked`) if a commit
-  touches modules other than `module` unless they are also in scope.
+  touches modules other than `module` unless the caller named them in `module` too.
 - Discovery (`references/porting-recipes.md` section "finding unported work"): compare merged PRs
   on the source branch touching the module with the target branch history (`oca-port` does this
   natively, grep for `(cherry picked from commit` trailers and subjects otherwise).

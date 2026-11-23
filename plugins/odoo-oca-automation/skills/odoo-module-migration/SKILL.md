@@ -6,7 +6,7 @@ description: Migrate an OCA/Odoo module from one Odoo version to the next (for e
 # Odoo module migration
 
 Follow `odoo-task-core` first. Required arguments: `source_version`, `version` (target), `repo`,
-`module`. Task name: `module-migration`. Scope is checked against the target version.
+`module`. Task name: `module-migration`. Logs and findings are filed under the target version.
 
 A migration is mechanical in its skeleton and judgemental in its middle. The skeleton (branch,
 history, pre-commit, version bump, PR) is in `references/migration-process.md`; follow it

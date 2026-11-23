@@ -18,8 +18,8 @@ so even in `full` mode this skill never comments, pushes or opens issues.
   `version`, `repo`, `module`, `pr`, `workdir` and, when available, the diff of what the parent
   task changed or reviewed. When `odoo-pr-review` and `odoo-code-review` run back to back on the
   same PR head, run once, after the code review; the PR review's log points at the same report.
-- Standalone, when a user asks for it. Then run the scope gate and create your own task log
-  (`task=security-review`) before doing the review.
+- Standalone, when a user asks for it. Then check the required inputs (`version`, `repo`, `module`;
+  task-core section 4) and create your own task log (`task=security-review`) before doing the review.
 
 ## Procedure
 
@@ -45,8 +45,11 @@ so even in `full` mode this skill never comments, pushes or opens issues.
    using the body format in `assets/finding-body-template.md`:
 
    ```bash
-   python .claude/skills/odoo-task-core/scripts/automation.py finding --version 19.0 --repo partner-contact --module partner_contact_access_link --pr pr-1234 --severity high --title "Public controller returns contacts of any company" --location "controllers/main.py:57" --cwe CWE-639 --body-file finding.md
+   python .claude/skills/odoo-task-core/scripts/automation.py finding --version 19.0 --repo partner-contact --module partner_contact_access_link --pr pr-1234 --severity high --title "Public controller returns contacts of any company" --location "controllers/main.py:57" --cwe CWE-639 --body-file finding.md --min-severity medium
    ```
+
+   Pass the caller's `security_min_severity` as `--min-severity` and, when given,
+   `--security-root <security_root>` before the command.
 
    The helper appends to `security/<version>/<repo>/<module>/index.md`. Before recording,
    read that index: if the same issue is already listed and still `open`, do not add a duplicate;

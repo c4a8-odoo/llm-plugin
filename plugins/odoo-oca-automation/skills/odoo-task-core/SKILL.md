@@ -1,6 +1,6 @@
 ---
 name: odoo-task-core
-description: Shared contract for every Odoo/OCA automation skill (odoo-pr-review, odoo-code-review, odoo-module-migration, odoo-commit-porting, odoo-module-improvement, odoo-security-review). Defines the run modes plan/draft/full, the scope gate against config/automation.yaml, the task log layout logs/<odoo_version>/<repo>/<module>/<pr>/, argument parsing, OCA commit and PR conventions, the shared frame for pull request reviews (gathering, TL;DR, delivery per mode, combined structural + functional runs), and the mandatory closing security review. Read this FIRST whenever any odoo-* skill runs, whenever the user mentions automation modes, task logs, scope configuration, OCA conventions, or asks how an Odoo automation should behave.
+description: Shared contract for every Odoo/OCA automation skill (odoo-pr-review, odoo-code-review, odoo-module-migration, odoo-commit-porting, odoo-module-improvement, odoo-security-review). Defines the run modes plan/draft/full, the explicit task inputs every caller must supply (no configuration file), the task log layout logs/<odoo_version>/<repo>/<module>/<pr>/, argument parsing, OCA commit and PR conventions, the shared frame for pull request reviews (gathering, TL;DR, delivery per mode, combined structural + functional runs), and the mandatory closing security review. Read this FIRST whenever any odoo-* skill runs, whenever the user mentions automation modes, task logs, task arguments, OCA conventions, or asks how an Odoo automation should behave.
 ---
 
 # Odoo task core
@@ -12,7 +12,7 @@ only what is specific to them. If you are running a task skill, do the steps bel
 ## 1. Lifecycle of a task
 
 1. Parse the arguments (section 2) and resolve the mode (section 3).
-2. Run the scope gate (section 4). Out of scope means: write a skipped log, stop.
+2. Check the inputs (section 4). A missing required input means: ask once, or stop as `blocked`.
 3. Initialise the task log (section 5) before doing any real work, so a crash still leaves a trace.
 4. Do the work the task skill describes, respecting the mode.
 5. Run the `odoo-security-review` skill on the module (section 7). Always, in every mode.
@@ -21,31 +21,45 @@ only what is specific to them. If you are running a task skill, do the steps bel
 ## 2. Arguments
 
 Skills receive `key=value` tokens, in any order. Unknown keys are kept and shown in the log.
+There is no configuration file: everything a task needs comes from these arguments, given
+explicitly by the caller (the user or the automation that starts the run).
+
+Task inputs:
 
 | key | meaning | example |
 |---|---|---|
 | `mode` | `plan`, `draft` or `full` | `mode=draft` |
 | `version` | Odoo version the change lands on (target branch) | `version=19.0` |
-| `repo` | repo name as listed in the config scope | `repo=partner-contact` |
-| `module` | technical module name | `module=partner_firstname` |
+| `repo` | repo name | `repo=partner-contact` |
+| `github` | upstream `owner/repo` slug; default `OCA/<repo>` | `github=OCA/partner-contact` |
+| `module` | technical module name; comma-separated for several | `module=partner_firstname` |
 | `pr` | PR number in the upstream repo, if one exists | `pr=1234` |
 | `source_version` | for migration/porting: where the code comes from | `source_version=18.0` |
 | `commits` | comma-separated SHAs or `pr:<n>` for porting | `commits=pr:1180` |
 | `issue` | GitHub issue number driving an improvement | `issue=99` |
 | `task` | free text describing the improvement | `task="add tests for stage default"` |
-| `workdir` | local checkout root; default `work/<repo>` under the project | `workdir=D:/src/project` |
+| `workdir` | local checkout root; default `work/<repo>` under the current directory | `workdir=D:/src/project` |
 
-Resolution order for anything missing: explicit argument, then environment variable
-`ODOO_AUTOMATION_<KEY>` (for example `ODOO_AUTOMATION_MODE`), then `defaults` in
-`config/automation.yaml`. The defaults also name `current_version` (19.0), `next_version`
-(20.0) and `previous_version` (18.0); a missing `version` falls back to `current_version`, a
-missing `source_version` for a migration to `previous_version` of the target. If `version`, `repo` or `module` cannot be resolved, ask once in an
-interactive session; in a non-interactive run, write a `blocked` log and stop.
+Policy inputs (optional; the default is the safe choice, so the caller only names them to loosen
+or tighten a run):
 
-For `pr`-driven tasks (`pr-review`, `code-review`) derive `module` from the files touched by
-the PR. A PR that touches several modules is handled once per module that is in scope; modules
-out of scope are mentioned in the log but not reviewed. Section 9 describes the frame both
-review skills share.
+| key | meaning | default |
+|---|---|---|
+| `fork_owner` | GitHub owner of the fork to push to | the authenticated `gh` user |
+| `allow_approve` | `full` mode may submit `APPROVE` reviews | `false` |
+| `allow_request_changes` | `full` mode may submit `REQUEST_CHANGES` reviews | `false` |
+| `block_full_on_severity` | introduced security finding at or above this level downgrades `full` to draft | `high` |
+| `security_min_severity` | lowest severity recorded under `security/` | `medium` |
+| `log_root` | root folder of the task logs | `logs` |
+| `security_root` | root folder of recorded security findings | `security` |
+
+Nothing is inferred: there is no fallback to environment variables, a config file or a "current"
+Odoo version. `version` and `source_version` are always given by the caller.
+
+For `pr`-driven tasks (`pr-review`, `code-review`) `module` may be left out; it is then the set
+of modules the PR touches, all of them reviewed. When `module` is given, only those modules are
+reviewed; other modules the PR touches are mentioned in the log but not reviewed. Section 9
+describes the frame both review skills share.
 
 ## 3. Modes
 
@@ -62,26 +76,26 @@ record it under **Blocked / needs human** in the log, do what is still safe, and
 mode a security finding at or above `block_full_on_severity` that is *introduced by the change
 you produced* downgrades the submission to draft; say so in the log.
 
-Default mode is whatever `defaults.mode` says (shipped as `plan`). Never promote yourself to a
-higher mode than requested.
+Default mode is `plan` when the caller gives none. Never promote yourself to a higher mode than
+requested.
 
-## 4. Scope gate
+## 4. Required inputs
 
-Automations must only touch modules listed in `config/automation.yaml`. Check it with the helper:
+Each task skill names its required arguments (always `version` and `repo`; `module` except for
+PR-driven tasks; `source_version` for migrations and ports; `pr`, `commits`, `issue` or `task`
+as the skill says). The caller decides which repos and modules an automation may touch by what
+it passes; the skills do not keep their own list. Never guess a missing value from the
+repository, branch names or earlier runs.
 
-```bash
-python .claude/skills/odoo-task-core/scripts/automation.py check-scope --version 19.0 --repo partner-contact --module partner_firstname --task code-review
-```
+When a required input is missing or ambiguous (for example `version=19` or a `repo` that does
+not exist under `github`):
 
-Exit code 0 means in scope; it prints the `github` slug (owner/repo) to use. Exit code 2 means out
-of scope: write a log to `logs/_out_of_scope/<date>_<version>_<repo>_<module>.md` with status
-`skipped` and stop. Exit 3 means the config is unreadable: stop with status `blocked`.
+- interactive session: ask the caller once, naming every missing input in one question;
+- non-interactive run: write a task log with status `blocked` listing the missing inputs (use
+  `pr=no-pr` and `module=_unknown` for any part of the log path that is itself missing) and stop.
 
-Scope is checked against the **target** version (where the change lands). A scope entry without
-`odoo_version` applies to every version, so a migration from 18.0 to 19.0 or from 19.0 to 20.0 is
-in scope as long as the module is listed for its repo. An entry with `odoo_version: "19.0"` (or a
-list of versions) restricts the modules to those versions. Never edit the config file yourself; it
-is the human's steering wheel. A module list of `["*"]` means every module of that repo.
+Record every input the run used, defaults included, in the log's `arguments` field so the run
+can be repeated exactly.
 
 ## 5. Task log
 
@@ -99,10 +113,11 @@ branch use `no-pr`.
 Create the file with the helper so the layout stays uniform:
 
 ```bash
-python .claude/skills/odoo-task-core/scripts/automation.py log-init --version 19.0 --repo partner-contact --module partner_firstname --pr pr-1234 --task code-review --mode draft --title "Review of OCA/partner-contact#1234"
+python .claude/skills/odoo-task-core/scripts/automation.py log-init --version 19.0 --repo partner-contact --github OCA/partner-contact --module partner_firstname --pr pr-1234 --task code-review --mode draft --title "Review of OCA/partner-contact#1234" --arguments "mode=draft version=19.0 repo=partner-contact pr=1234"
 ```
 
-It prints the path. Fill in the template sections (see `assets/log-template.md`) as you go:
+It prints the path. Pass `--log-root <log_root>` before the command when the caller set
+`log_root`. Fill in the template sections (see `assets/log-template.md`) as you go:
 **Context**, **Actions**, **Outcome**, **Security review**, **Blocked / needs human**, **Follow-ups**.
 Close it with `log-finish --path <path> --status <status>`. Status values: `planned`, `drafted`,
 `completed`, `skipped`, `blocked`, `failed`.
@@ -115,9 +130,9 @@ unpushed commits).
 ## 6. Working with repositories and GitHub
 
 - Local checkouts live under `work/<repo>/` by default (git-ignored). Clone with
-  `gh repo clone <owner>/<repo> work/<repo> -- --branch <version>`; use `git worktree add` for a
+  `gh repo clone <github> work/<repo> -- --branch <version>`; use `git worktree add` for a
   second version of the same repo.
-- Push only to the fork named in `defaults.fork_owner`. If it is empty, use the authenticated
+- Push only to the fork of `fork_owner`. If the caller gave none, use the authenticated
   `gh` user's fork (create it with `gh repo fork --clone=false` if needed). Never push to the
   upstream version branches.
 - Branch names: `<version>-<type>-<module>[-<topic>]`, for example `20.0-mig-partner_firstname`,
@@ -150,9 +165,9 @@ logs name the same report file.
   writing code.
 - `references/github-recipes.md`: gh/API commands per mode.
 - `assets/log-template.md`: the log skeleton the helper fills.
-- `scripts/automation.py`: `check-scope`, `list-scope`, `log-init`, `log-finish`, `log-move`,
-  `finding`, `config`. Needs Python 3; reads YAML with PyYAML or ruamel.yaml when installed and
-  falls back to a built-in parser for the simple config syntax otherwise. `automation.ps1` is a
+- `scripts/automation.py`: `log-init`, `log-finish`, `log-move`, `finding`. Needs Python 3
+  (standard library only) and reads no configuration; roots and thresholds come from its flags
+  (`--log-root`, `--security-root`, `finding --min-severity`). `automation.ps1` is a
   thin wrapper with the same arguments for PowerShell users (run with
   `powershell -NoProfile -ExecutionPolicy Bypass -File ...` if script execution is disabled). If
   Python is missing, perform the same steps by hand, matching the layouts described here exactly.
