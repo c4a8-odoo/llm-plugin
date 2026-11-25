@@ -55,7 +55,8 @@ script need, README fragments to touch, risks, PR title/body draft.
 6. `pre-commit run -a`, then one commit per logical change: `[FIX] <module>: <summary>` with a
    body giving the cause and `Fixes #<issue>` if there is one.
 7. Push to the fork, PR `[<version>][FIX] <module>: <summary>`; body: what/why, how to test,
-   `Closes #<issue>`, `@maintainers`. Draft in draft mode; ready in full mode. Full mode may also
+   `Closes #<issue>` (no maintainer mentions, odoo-task-core section 6). Draft in draft mode;
+   ready in full mode. Full mode may also
    comment on the issue with the PR link, one line.
 8. If the fix also applies to other supported versions, say so in **Follow-ups** with ready
    `odoo-commit-porting` arguments; do not port in the same run.

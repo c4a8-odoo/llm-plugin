@@ -68,6 +68,4 @@ Closes #<issue>
 **Compatibility**: <none | migration script included | behaviour change for users who ...>
 
 **Merge bump**: <patch | minor | major | nobump> (the bot bumps the manifest on merge)
-
-@<maintainers>
 ```

@@ -141,6 +141,14 @@ unpushed commits).
   Commits produced with AI help carry an `Assisted-by:` trailer, never `Co-Authored-By:`.
 - Read `references/github-recipes.md` for the exact `gh` commands that create draft PRs, pending
   reviews, submitted reviews and comments. Draft mode uses the pending/draft variants only.
+- **No `@` mentions in draft PRs.** Whenever you open a draft PR (draft mode, or full mode
+  downgraded to draft), never write `@<login>` in its title, body or commits: GitHub notifies
+  on mentions even in drafts. List the people to ping as plain text instead, under a line
+  `To notify when ready: <login>, <login>` (logins without `@`). The `@` mentions are sent
+  only when the PR becomes ready for review, as a separate comment (see
+  `references/github-recipes.md`). Ready-for-review PRs opened in full mode mention people
+  directly in the body as usual. Never list or mention the manifest maintainers in either case:
+  the OCA bot notifies them automatically.
 - Before acting on a PR, read existing comments and reviews so you do not repeat them.
 
 ## 7. Closing security review

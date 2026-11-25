@@ -117,7 +117,11 @@ Body conventions:
 - Describe the change and how to test it.
 - Link issues with `Closes #123` or `Related to #123`; migration PRs say `Part of #<migration issue>`.
 - Ports say `Forward-port of #<pr>` or `Backport of #<pr>` and list the ported PRs.
-- Mention `@<maintainers>` listed in the manifest so they get pinged.
+- Do not mention the manifest maintainers; the OCA bot notifies them automatically.
+- Other people to ping (for example the original author of a ported PR) are `@`-mentioned only
+  in PRs that are ready for review. Draft PRs never contain `@` mentions; they list the logins
+  as plain text (`To notify when ready: login1, login2`) and the mentions go into a comment
+  when the PR is marked ready.
 - Do not include security review content; that stays local.
 
 Merge policy: two approvals from OCA members (one may be a maintainer), green CI, and a runboat

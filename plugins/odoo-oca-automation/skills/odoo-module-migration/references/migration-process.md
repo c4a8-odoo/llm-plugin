@@ -109,8 +109,6 @@ Part of #<migration issue number>
 
 **Testing**
 - <tests run locally: yes/no; what CI should show>
-
-@<maintainers from manifest>
 ```
 
 Full mode only, if the module was unclaimed on the migration issue:

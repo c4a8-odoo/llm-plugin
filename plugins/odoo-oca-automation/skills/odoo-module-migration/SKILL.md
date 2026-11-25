@@ -63,7 +63,8 @@ Execute `references/migration-process.md`. Key judgement points:
 - **Commit** `[MIG] <module>: Migration to <target>` with all adaptation changes.
 - **PR**: draft mode opens a draft PR; full mode opens it ready for review and comments on the
   migration issue ("Working on <module>: #<pr>") if the module was unclaimed. PR body from
-  `references/migration-process.md`.
+  `references/migration-process.md`; a draft PR never contains `@` mentions (odoo-task-core
+  section 6).
 
 Stop with `blocked` instead of guessing when: the module depends on core features removed in the
 target (no replacement), the data model must change beyond renames, or JS must be rewritten from

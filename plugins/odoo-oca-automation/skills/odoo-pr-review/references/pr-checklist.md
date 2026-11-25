@@ -11,7 +11,6 @@ on this list; they belong to `odoo-code-review/references/review-checklist.md`.
 | Title `[<version>][TAG] module: summary`; base branch = version | S (B if wrong branch) |
 | One logical change per PR; `[MIG]` PRs contain only the migration (fixes go to the source version first, then get ported) | B |
 | PR body explains the change and how to test; links the issue (`Closes #`, `Related to #`) or the migration issue (`Part of #`); ports say `Forward-port of #` / `Backport of #` | S |
-| Manifest maintainers mentioned in the body or PR comments so they are pinged | N |
 | Not a duplicate of an open PR for the same module and topic (`gh pr list --search`) | S |
 | Draft status matches the author's intent (a draft asking for review is fine; a ready PR with "WIP" in the title is not) | N |
 

@@ -43,8 +43,12 @@ Never `git push origin <version>` and never force-push a branch you did not crea
 # draft mode
 gh pr create --repo OWNER/REPO --base 19.0 --head FORK_OWNER:19.0-mig-MODULE \
   --title "[19.0][MIG] MODULE: Migration to 19.0" --body-file pr-body.md --draft
-# full mode: same without --draft, or promote an existing draft
+#   the body of a draft PR names people as plain text only ("To notify when ready: login1, login2"),
+#   never "@login1": GitHub sends notifications for mentions in drafts too
+# full mode: same without --draft (body may @mention directly), or promote an existing draft
 gh pr ready N --repo OWNER/REPO
+#   after promoting a draft, ping the people from its "To notify when ready" line in one comment
+gh pr comment N --repo OWNER/REPO --body "Ready for review. @login1 @login2"
 gh pr comment N --repo OWNER/REPO --body-file comment.md         # full only
 gh issue comment N --repo OWNER/REPO --body "..."                # full only (e.g. claim a module on the migration issue)
 ```

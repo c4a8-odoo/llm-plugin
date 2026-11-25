@@ -63,10 +63,12 @@ command (the bot bumps on merge, the PR does not); PR title and body.
 
    Adaptations for <target>: <none | list>
 
-   @<original author> @<maintainers>
+   To notify when ready: <original author> <!-- draft PR: plain logins, never @ -->
+   @<original author> 
    ```
 
-   Draft PR in draft mode; ready PR in full mode. In full mode also comment on the source PR:
+   Draft PR in draft mode; ready PR in full mode. A draft PR never contains `@` mentions
+   (odoo-task-core section 6). In full mode also comment on the source PR:
    "Forward-ported to <target> in #<n>" (one line, no more).
 
 7. Several PRs to port for the same module: one port PR per source PR unless they are
